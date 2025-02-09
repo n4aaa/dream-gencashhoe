@@ -1,4 +1,4 @@
-Working with template:
+Working with plugingencashhoe:
 -----
 Take a loot at [Dream-Otchlan](https://github.com/DreamPoland/dream-otchlan), example project based on platform.
 
