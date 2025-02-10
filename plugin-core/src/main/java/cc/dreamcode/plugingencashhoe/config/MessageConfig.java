@@ -14,6 +14,13 @@ import eu.okaeri.configs.annotation.Headers;
 })
 public class MessageConfig extends OkaeriConfig {
 
+    @CustomKey("provide-text")
+    public BukkitNotice provideText = BukkitNotice.subtitle("&aWprowadz tekst na chat");
+    @CustomKey("name-changed")
+    public BukkitNotice nameChanged = BukkitNotice.chat("&7Nazwa zostala &azmieniona&7!");
+    @CustomKey("lore-line-changed")
+    public BukkitNotice loreLineChanged = BukkitNotice.chat("&7Linia opisu zostala &azmieniona&7!");
+
     @CustomKey(value="hoe-do-not-exist")
     public BukkitNotice hoeDoNotExits = BukkitNotice.chat("&cPodana motyka nie istnieje!");
     @CustomKey(value="hoe-create")

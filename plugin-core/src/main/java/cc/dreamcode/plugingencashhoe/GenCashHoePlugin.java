@@ -58,8 +58,13 @@ public final class GenCashHoePlugin extends DreamBukkitPlatform implements Dream
             componentService.setDebug(pluginConfig.debug);
         });
 
+        // service
         componentService.registerComponent(GenCashHoeService.class);
 
+        // controller
+        componentService.registerComponent(GenCashHoeController.class);
+
+        // command
         componentService.registerComponent(HoeCommand.class);
     }
 

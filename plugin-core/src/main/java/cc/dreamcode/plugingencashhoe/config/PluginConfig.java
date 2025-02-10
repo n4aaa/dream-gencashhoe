@@ -44,89 +44,98 @@ public class PluginConfig extends OkaeriConfig {
                     .toItemStack())
             .put(12, ItemBuilder.of(XMaterial.BOOK.parseMaterial())
                     .setName("&9&lUstaw opis")
-                    .setLore("&8» &7Kliknj &fPPM&7, aby przejść dalej!")
+                    .setLore("", "&8» &7Kliknj &fPPM&7, aby przejść dalej!")
                     .toItemStack())
             .put(13, ItemBuilder.of(XMaterial.ENCHANTED_BOOK.parseMaterial())
                     .setName("&9&lEnchanty")
-                    .setLore("&8» &7Kliknj &fPPM&7, aby przejść dalej!")
+                    .setLore("", "&8» &7Kliknj &fPPM&7, aby przejść dalej!")
                     .toItemStack())
             .put(14, ItemBuilder.of(XMaterial.GRASS_BLOCK.parseMaterial())
                     .setName("&9&lBloki")
-                    .setLore("&8» &7Kliknj &fPPM&7, aby przejść dalej!")
+                    .setLore("", "&8» &7Kliknj &fPPM&7, aby przejść dalej!")
                     .toItemStack())
             .put(16, ItemBuilder.of(XMaterial.LIME_DYE.parseMaterial())
                     .setName("&a&lStwórz motykę")
-                    .setLore("&8» &7Kliknj &fPPM&7, aby stworzyć motykę!")
+                    .setLore("", "&8» &7Kliknj &fPPM&7, aby stworzyć motykę!")
                     .toItemStack())
             .build());
 
     @Comment("Skonfiguruj slot przycisku ustawiania rozmiaru:")
-    @CustomKey("icon-menu-set-size")
-    public int iconMenuSetSize = 10;
+    @CustomKey("icon-menu-set-size-slot")
+    public int iconMenuSetSizeSlot = 10;
     @Comment("Skonfiguruj slot przycisku ustawiania nazwy:")
-    @CustomKey("icon-menu-set-name")
-    public int iconMenuSetName = 11;
+    @CustomKey("icon-menu-set-name-slot")
+    public int iconMenuSetNameSlot = 11;
     @Comment("Skonfiguruj slot przycisku ustawiania opisu:")
-    @CustomKey("icon-menu-set-lore")
-    public int iconMenuSetLore = 12;
+    @CustomKey("icon-menu-set-lore-slot")
+    public int iconMenuSetLoreSlot = 12;
     @Comment("Skonfiguruj slot przycisku ustawiania enchantów:")
-    @CustomKey("icon-menu-set-enchants")
-    public int iconMenuSetEnchants = 13;
+    @CustomKey("icon-menu-set-enchants-slot")
+    public int iconMenuSetEnchantsSlot = 13;
     @Comment("Skonfiguruj slot przycisku ustawiania dozwolonych bloków:")
-    @CustomKey("icon-menu-set-blocks")
-    public int iconMenuSetBlocks = 14;
+    @CustomKey("icon-menu-set-blocks-slot")
+    public int iconMenuSetBlocksSlot = 14;
     @Comment("Skonfiguruj slot przycisku tworzenia motyki:")
-    @CustomKey("icon-menu-create-hoe")
-    public int iconMenuCreateHoe = 15;
+    @CustomKey("icon-menu-create-hoe-slot")
+    public int iconMenuCreateHoeSlot = 15;
 
     @Comment
     @Comment("Skonfiguruj menu dla kreatora motyki:")
-    @CustomKey("hoe-creator-menu-builder")
+    @CustomKey("hoe-creator-menu-size-builder")
     public BukkitMenuBuilder hoeCreatorSizeMenuBuilder = new BukkitMenuBuilder("&8Tworzenie motyki (rozmiar)", 3, new MapBuilder<Integer, ItemStack>()
-            .put(12, ItemBuilder.of(XMaterial.RED_STAINED_GLASS_PANE.parseMaterial())
+            .put(11, ItemBuilder.of(XMaterial.RED_STAINED_GLASS_PANE.parseMaterial())
                     .setName("&c&l-1")
                     .toItemStack())
-            .put(13, ItemBuilder.of(XMaterial.LIME_DYE.parseMaterial())
-                    .setName("&9&lPotwierdź")
-                    .setLore("&8» &7Rozmiar: &f{size}",
-                            "",
-                            "&8» &7Kliknj &fPPM&7, aby potwierdzić rozmiar!")
+            .put(12, ItemBuilder.of(XMaterial.STICK.parseMaterial())
+                    .setName("&9&l{size}x{size}")
                     .toItemStack())
-            .put(14, ItemBuilder.of(XMaterial.GREEN_STAINED_GLASS_PANE.parseMaterial())
+            .put(13, ItemBuilder.of(XMaterial.GREEN_STAINED_GLASS_PANE.parseMaterial())
                     .setName("&a&l+1")
                     .toItemStack())
+            .put(15, ItemBuilder.of(XMaterial.LIME_DYE.parseMaterial())
+                    .setName("&aPotwierdz rozmiar")
+                    .toItemStack())
             .build());
-    @Comment("Skonfiguruj slot przycisku potwierdzania rozmiaru motyki:")
-    @CustomKey(value="icon-menu-submit-size")
-    public int iconMenuSubmitSize = 13;
-    @Comment("Skonfiguruj slot przycisku powiększania rozmiaru motyki:")
-    @CustomKey(value="icon-menu-decrease-size")
-    public int iconMenuDecreaseSize = 12;
-    @Comment("Skonfiguruj slot przycisku zmniejszania rozmiaru motyki:")
-    @CustomKey(value="icon-menu-increase-size")
-    public int iconMenuIncreaseSize = 14;
+    @Comment("Skonfiguruj slot przedmiotu powiększania rozmiaru motyki:")
+    @CustomKey(value="icon-menu-decrease-size-slot")
+    public int iconMenuDecreaseSizeSlot = 11;
+    @Comment("Skonfiguruj slot przedmiotu zmniejszania rozmiaru motyki:")
+    @CustomKey(value="icon-menu-increase-size-slot")
+    public int iconMenuIncreaseSizeSlot = 13;
+    @Comment("Skonfiguruj slot przedmiotu wizualnego rozmiaru motyki:")
+    @CustomKey(value="icon-menu-presenter-size-slot")
+    public int iconMenuPresenterSizeSlot = 12;
+    @Comment("Skonfiguruj slot przedmiotu potwierdzania rozmiaru motyki:")
+    @CustomKey(value="icon-menu-submit-size-slot")
+    public int iconMenuSubmitSizeSlot = 16;
 
     @Comment
-    @Comment("Skonfiguruj menu dla kreatora motyki (wybór dozwolonych bloków):")
-    @CustomKey("hoe-breakables-menu-builder")
-    public BukkitMenuBuilder hoeBreakablesMenuBuilder = new BukkitMenuBuilder("&8Wybierz bloki do niszczenia", 6, new MapBuilder<Integer, ItemStack>()
-            .put(MenuUtil.countSlot(6, 4), ItemBuilder.of(XMaterial.ARROW.parseMaterial())
-                    .setName("&cPowrot do porzedniej strony.")
-                    .setLore("", "&8» &7Kliknij, aby zmienic strone.")
+    @Comment("Skonfiguruj menu dla kreatora motyki (edytor opisu):")
+    @CustomKey("hoe-creator-lore-menu-builder")
+    public BukkitMenuBuilder hoeCreatorLoreMenuBuilder = new BukkitMenuBuilder("&8Tworzenie motyki (opis)", 6, new MapBuilder<Integer, ItemStack>()
+            .put(MenuUtil.countSlot(6, 7), ItemBuilder.of(XMaterial.LIME_DYE.parseMaterial())
+                    .setName("&aDodaj nową linie")
                     .toItemStack())
-            .put(MenuUtil.countSlot(6, 5), ItemBuilder.of(XMaterial.BARRIER.parseMaterial())
-                    .setName("&cPowrot do menu glownego.")
+            .put(MenuUtil.countSlot(6, 3), ItemBuilder.of(XMaterial.ARROW.parseMaterial())
+                    .setName("&cPowrot do poprzedniej strony")
+                    .setLore("", "&8» &7Kliknij, aby zmienic strone!")
                     .toItemStack())
-            .put(MenuUtil.countSlot(6, 6), ItemBuilder.of(XMaterial.ARROW.parseMaterial())
-                    .setName("&aPrzejdz do nastepnej strony.")
-                    .setLore("", "&8» &7Kliknij, aby zmienic strone.")
+            .put(MenuUtil.countSlot(6, 4), ItemBuilder.of(XMaterial.BARRIER.parseMaterial())
+                    .setName("&cPowrot do menu glownego")
+                    .toItemStack())
+            .put(MenuUtil.countSlot(6, 5), ItemBuilder.of(XMaterial.ARROW.parseMaterial())
+                    .setName("&aPrzejdz do nastepnej strony")
+                    .setLore("", "&8» &7Kliknij, aby zmienic strone!")
                     .toItemStack())
             .build());
-
-    @CustomKey(value="icon-menu-next-page-slot")
-    public int iconMenuNextPageSlot = MenuUtil.countSlot(6, 6);
-    @CustomKey(value="icon-menu-previous-page-slot")
-    public int iconMenuPreviousPageSlot = MenuUtil.countSlot(6, 4);
+    @CustomKey(value="icon-lore-menu-next-page-slot")
+    public int iconLoreMenuNextPageSlot = MenuUtil.countSlot(6, 5);
+    @CustomKey(value="icon-lore-menu-previous-page-slot")
+    public int iconLoreMenuPreviousPageSlot = MenuUtil.countSlot(6, 3);
+    @CustomKey(value="icon-lore-menu-close-slot")
+    public int iconLoreMenuCloseSlot = MenuUtil.countSlot(6, 4);
+    @CustomKey(value="icon-lore-menu-add-line-slot")
+    public int iconLoreMenuAddLineSlot = MenuUtil.countSlot(6, 7);
 
     @Comment
     @Comment("Skonfiguruj domyślny item motyki:")

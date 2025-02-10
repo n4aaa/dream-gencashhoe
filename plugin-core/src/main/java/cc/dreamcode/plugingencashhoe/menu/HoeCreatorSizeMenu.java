@@ -31,38 +31,65 @@ public class HoeCreatorSizeMenu implements BukkitMenuPlayerSetup {
 
     @Override
     public BukkitMenu build(@NonNull HumanEntity humanEntity) {
-        final BukkitMenuBuilder menuBuilder = this.pluginConfig.hoeCreatorMenuBuilder;
+        final BukkitMenuBuilder menuBuilder = this.pluginConfig.hoeCreatorSizeMenuBuilder;
         final BukkitMenu bukkitMenu = menuBuilder.buildWithItems(new MapBuilder<String, Object>()
-                .put("size", hoeItem.getSize())
+                .put("size", this.hoeItem.getSize())
                 .build());
 
         menuBuilder.getItems().forEach((slot, item) -> {
-            if (pluginConfig.iconMenuDecreaseSize == slot) {
+            if (this.pluginConfig.iconMenuDecreaseSizeSlot == slot) {
                 bukkitMenu.setItem(slot, ItemBuilder.of(item).fixColors().toItemStack(), e -> {
-                    hoeItem.setSize(hoeItem.getSize() - 1);
+                    if (this.hoeItem.getSize() > 1) {
+                        this.hoeItem.setSize(this.hoeItem.getSize() - 1);
+
+                        bukkitMenu.setItem(this.pluginConfig.iconMenuPresenterSizeSlot, ItemBuilder.of(menuBuilder.getItems().get(this.pluginConfig.iconMenuPresenterSizeSlot))
+                                .setAmount(this.hoeItem.getSize())
+                                .fixColors(new MapBuilder<String, Object>()
+                                        .put("size", this.hoeItem.getSize())
+                                        .build())
+                                .toItemStack());
+                    }
                 });
             }
 
-            if (pluginConfig.iconMenuIncreaseSize == slot) {
+            if (this.pluginConfig.iconMenuIncreaseSizeSlot == slot) {
                 bukkitMenu.setItem(slot, ItemBuilder.of(item).fixColors().toItemStack(), e -> {
-                    hoeItem.setSize(hoeItem.getSize() + 1);
+                    if (this.hoeItem.getSize() < 64) {
+                        this.hoeItem.setSize(this.hoeItem.getSize() + 1);
+
+                        bukkitMenu.setItem(this.pluginConfig.iconMenuPresenterSizeSlot, ItemBuilder.of(menuBuilder.getItems().get(this.pluginConfig.iconMenuPresenterSizeSlot))
+                                .setAmount(this.hoeItem.getSize())
+                                .fixColors(new MapBuilder<String, Object>()
+                                        .put("size", this.hoeItem.getSize())
+                                        .build())
+                                .toItemStack());
+                    }
                 });
             }
 
-            if (pluginConfig.iconMenuSubmitSize == slot) {
+            if (this.pluginConfig.iconMenuSubmitSizeSlot == slot) {
                 bukkitMenu.setItem(slot, ItemBuilder.of(item).fixColors().toItemStack(), e -> {
                     Player player = (Player) e.getWhoClicked();
 
                     this.tasker.newChain()
                             .supplyAsync(() -> {
                                 final HoeCreatorMenu hoeCreatorMenu = this.genCashHoePlugin.createInstance(HoeCreatorMenu.class);
-                                hoeCreatorMenu.setHoeItem(hoeItem);
+                                hoeCreatorMenu.setHoeItem(this.hoeItem);
 
                                 return hoeCreatorMenu.build(player);
                             })
                             .acceptSync(newMenu -> newMenu.open(player))
                             .execute();
                 });
+            }
+
+            if (this.pluginConfig.iconMenuPresenterSizeSlot == slot) {
+                bukkitMenu.setItem(this.pluginConfig.iconMenuPresenterSizeSlot, ItemBuilder.of(menuBuilder.getItems().get(this.pluginConfig.iconMenuPresenterSizeSlot))
+                        .setAmount(this.hoeItem.getSize())
+                        .fixColors(new MapBuilder<String, Object>()
+                                .put("size", this.hoeItem.getSize())
+                                .build())
+                        .toItemStack());
             }
         });
 
