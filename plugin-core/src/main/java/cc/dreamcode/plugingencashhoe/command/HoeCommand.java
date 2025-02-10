@@ -1,6 +1,5 @@
 package cc.dreamcode.plugingencashhoe.command;
 
-
 import cc.dreamcode.command.CommandBase;
 import cc.dreamcode.command.annotation.*;
 import cc.dreamcode.notice.bukkit.BukkitNotice;
@@ -56,7 +55,7 @@ public class HoeCommand implements CommandBase {
         this.tasker.newChain()
                 .supplyAsync(() -> {
                     final HoeCreatorMenu hoeCreatorMenu = this.genCashHoePlugin.createInstance(HoeCreatorMenu.class);
-                    hoeCreatorMenu.setHoeItem(this.genCashHoeService.buildDefaultHoe(0));
+                    hoeCreatorMenu.setHoeItem(this.genCashHoeService.buildDefaultCreatorHoe(1));
 
                     return hoeCreatorMenu.build(player);
                 })
@@ -67,12 +66,6 @@ public class HoeCommand implements CommandBase {
     @Async
     @Executor(path = "create", description = "Tworzy motykę o podanym rozmiarze.")
     public void create(Player player, @Arg int size) {
-        if (genCashHoeService.containsHoeItem(size)) {
-            this.messageConfig.hoeExits.send(player);
-
-            return;
-        }
-
         this.messageConfig.hoeCreate.send(player);
 
         this.pluginConfig.hoes.add(this.genCashHoeService.buildDefaultHoe(size));

@@ -16,8 +16,6 @@ public class MessageConfig extends OkaeriConfig {
 
     @CustomKey(value="hoe-do-not-exist")
     public BukkitNotice hoeDoNotExits = BukkitNotice.chat("&cPodana motyka nie istnieje!");
-    @CustomKey(value="hoe-exist")
-    public BukkitNotice hoeExits = BukkitNotice.chat("&cPodana motyka już istnieje!");
     @CustomKey(value="hoe-create")
     public BukkitNotice hoeCreate = BukkitNotice.chat("&aStworzono motykę!");
     @CustomKey(value="hoe-give")

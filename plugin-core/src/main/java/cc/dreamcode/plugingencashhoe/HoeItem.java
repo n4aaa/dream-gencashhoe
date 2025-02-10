@@ -8,6 +8,8 @@ import java.util.List;
 
 @Data
 public class HoeItem {
+    private final int id;
+
     private final ItemStack itemStack;
 
     private final int size;
