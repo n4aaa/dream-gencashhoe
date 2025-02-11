@@ -4,9 +4,7 @@ import cc.dreamcode.menu.adventure.BukkitMenuBuilder;
 import cc.dreamcode.menu.adventure.base.BukkitMenu;
 import cc.dreamcode.menu.adventure.setup.BukkitMenuPlayerSetup;
 import cc.dreamcode.plugingencashhoe.GenCashHoePlugin;
-import cc.dreamcode.plugingencashhoe.GenCashHoeService;
 import cc.dreamcode.plugingencashhoe.HoeCreatorItem;
-import cc.dreamcode.plugingencashhoe.config.MessageConfig;
 import cc.dreamcode.plugingencashhoe.config.PluginConfig;
 import cc.dreamcode.utilities.builder.MapBuilder;
 import cc.dreamcode.utilities.bukkit.builder.ItemBuilder;
@@ -23,8 +21,6 @@ public class HoeCreatorSizeMenu implements BukkitMenuPlayerSetup {
 
     private final GenCashHoePlugin genCashHoePlugin;
     private final PluginConfig pluginConfig;
-    private final MessageConfig messageConfig;
-    private final GenCashHoeService genCashHoeService;
     private final Tasker tasker;
 
     @Setter private HoeCreatorItem hoeItem;
@@ -50,6 +46,8 @@ public class HoeCreatorSizeMenu implements BukkitMenuPlayerSetup {
                                 .toItemStack());
                     }
                 });
+
+                return;
             }
 
             if (this.pluginConfig.iconMenuIncreaseSizeSlot == slot) {
@@ -65,6 +63,8 @@ public class HoeCreatorSizeMenu implements BukkitMenuPlayerSetup {
                                 .toItemStack());
                     }
                 });
+
+                return;
             }
 
             if (this.pluginConfig.iconMenuSubmitSizeSlot == slot) {
@@ -81,6 +81,8 @@ public class HoeCreatorSizeMenu implements BukkitMenuPlayerSetup {
                             .acceptSync(newMenu -> newMenu.open(player))
                             .execute();
                 });
+
+                return;
             }
 
             if (this.pluginConfig.iconMenuPresenterSizeSlot == slot) {
@@ -90,7 +92,11 @@ public class HoeCreatorSizeMenu implements BukkitMenuPlayerSetup {
                                 .put("size", this.hoeItem.getSize())
                                 .build())
                         .toItemStack());
+
+                return;
             }
+
+            bukkitMenu.setItem(slot, ItemBuilder.of(item).fixColors().toItemStack());
         });
 
         return bukkitMenu;

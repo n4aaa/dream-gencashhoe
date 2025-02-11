@@ -19,6 +19,8 @@ import lombok.Setter;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 
+import java.util.stream.Collectors;
+
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class HoeCreatorMenu implements BukkitMenuPlayerSetup {
 
@@ -57,6 +59,8 @@ public class HoeCreatorMenu implements BukkitMenuPlayerSetup {
                                 .execute();
                     }
                 });
+
+                return;
             }
 
             if (pluginConfig.iconMenuSetNameSlot == slot) {
@@ -66,12 +70,14 @@ public class HoeCreatorMenu implements BukkitMenuPlayerSetup {
                     if (e.getWhoClicked() instanceof Player) {
                         Player player = (Player) e.getWhoClicked();
 
-                        this.genCashHoeService.addToNameEditors(player.getUniqueId(), this.hoeItem);
                         player.closeInventory();
-
                         this.messageConfig.provideText.send(player);
+
+                        this.genCashHoeService.addToNameEditors(player.getUniqueId(), this.hoeItem);
                     }
                 });
+
+                return;
             }
 
             if (pluginConfig.iconMenuSetLoreSlot == slot) {
@@ -90,18 +96,52 @@ public class HoeCreatorMenu implements BukkitMenuPlayerSetup {
                                 .execute();
                     }
                 });
+
+                return;
             }
 
             if (pluginConfig.iconMenuSetEnchantsSlot == slot) {
-                bukkitMenu.setItem(slot, ItemBuilder.of(item).fixColors().toItemStack(), e -> {
+                bukkitMenu.setItem(slot, ItemBuilder.of(item).fixColors(new MapBuilder<String, Object>()
+                        .put("enchants", (!hoeItem.getItemStack().getItemMeta().getEnchants().isEmpty()) ? hoeItem.getItemStack().getItemMeta().getEnchants().entrySet().stream().map(ench -> ench.getKey().getName().toLowerCase() + " - " + ench.getValue()).collect(Collectors.joining(", ")) : "&cBrak!")
+                        .build()).toItemStack(), e -> {
+                    if (e.getWhoClicked() instanceof Player) {
+                        Player player = (Player) e.getWhoClicked();
 
+                        this.tasker.newChain()
+                                .supplyAsync(() -> {
+                                    final HoeCreatorEnchantMenu hoeCreatorEnchantMenu = this.genCashHoePlugin.createInstance(HoeCreatorEnchantMenu.class);
+                                    hoeCreatorEnchantMenu.setHoeItem(hoeItem);
+
+                                    return hoeCreatorEnchantMenu.build(player);
+                                })
+                                .acceptSync(newMenu -> newMenu.open(0, player))
+                                .execute();
+                    }
                 });
+
+                return;
             }
 
             if (pluginConfig.iconMenuSetBlocksSlot == slot) {
-                bukkitMenu.setItem(slot, ItemBuilder.of(item).fixColors().toItemStack(), e -> {
+                bukkitMenu.setItem(slot, ItemBuilder.of(item).fixColors(new MapBuilder<String, Object>()
+                        .put("blocks", (!hoeItem.getBreakables().isEmpty()) ? hoeItem.getBreakables().stream().map(breakable -> breakable.name().toLowerCase()).collect(Collectors.joining(", ")) : "&cBrak!")
+                        .build()).toItemStack(), e -> {
+                    if (e.getWhoClicked() instanceof Player) {
+                        Player player = (Player) e.getWhoClicked();
 
+                        this.tasker.newChain()
+                                .supplyAsync(() -> {
+                                    final HoeCreatorBlocksMenu hoeCreatorBlocksMenu = this.genCashHoePlugin.createInstance(HoeCreatorBlocksMenu.class);
+                                    hoeCreatorBlocksMenu.setHoeItem(hoeItem);
+
+                                    return hoeCreatorBlocksMenu.build(player);
+                                })
+                                .acceptSync(newMenu -> newMenu.open(0, player))
+                                .execute();
+                    }
                 });
+
+                return;
             }
 
             if (pluginConfig.iconMenuCreateHoeSlot == slot) {
@@ -109,13 +149,18 @@ public class HoeCreatorMenu implements BukkitMenuPlayerSetup {
                     if (e.getWhoClicked() instanceof Player) {
                         Player player = (Player) e.getWhoClicked();
 
+                        player.closeInventory();
                         this.messageConfig.hoeCreate.send(player);
 
-                        this.pluginConfig.hoes.add(new HoeItem(hoeItem.getId(), hoeItem.getItemStack(), hoeItem.getSize(), hoeItem.getBreakables()));
+                        this.pluginConfig.hoes.add(new HoeItem(hoeItem.getId(), hoeItem.getItemStack(), false, hoeItem.getSize(), hoeItem.getBreakables()));
                         this.pluginConfig.save();
                     }
                 });
+
+                return;
             }
+
+            bukkitMenu.setItem(slot, ItemBuilder.of(item).fixColors().toItemStack());
         });
 
         return bukkitMenu;

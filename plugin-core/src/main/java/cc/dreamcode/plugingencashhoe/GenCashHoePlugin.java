@@ -9,6 +9,7 @@ import cc.dreamcode.platform.DreamVersion;
 import cc.dreamcode.platform.bukkit.DreamBukkitConfig;
 import cc.dreamcode.platform.bukkit.DreamBukkitPlatform;
 import cc.dreamcode.platform.bukkit.component.ConfigurationResolver;
+import cc.dreamcode.platform.bukkit.hook.PluginHookManager;
 import cc.dreamcode.platform.component.ComponentService;
 import cc.dreamcode.platform.other.component.DreamCommandExtension;
 import cc.dreamcode.plugingencashhoe.command.HoeCommand;
@@ -19,6 +20,8 @@ import cc.dreamcode.plugingencashhoe.command.handler.InvalidUsageHandlerImpl;
 import cc.dreamcode.plugingencashhoe.command.result.BukkitNoticeResolver;
 import cc.dreamcode.plugingencashhoe.config.MessageConfig;
 import cc.dreamcode.plugingencashhoe.config.PluginConfig;
+import cc.dreamcode.plugingencashhoe.worldguard.WorldGuardHook;
+import cc.dreamcode.utilities.bukkit.nbt.ItemNbtUtil;
 import eu.okaeri.configs.serdes.OkaeriSerdesPack;
 import eu.okaeri.tasker.bukkit.BukkitTasker;
 import lombok.Getter;
@@ -31,6 +34,7 @@ public final class GenCashHoePlugin extends DreamBukkitPlatform implements Dream
     @Override
     public void load(@NonNull ComponentService componentService) {
         instance = this;
+        ItemNbtUtil.setPlugin(this);
     }
 
     @Override
@@ -57,6 +61,11 @@ public final class GenCashHoePlugin extends DreamBukkitPlatform implements Dream
             // enable additional logs and debug messages
             componentService.setDebug(pluginConfig.debug);
         });
+
+        // hook
+        componentService.registerComponent(PluginHookManager.class, dreamHookManager ->
+                dreamHookManager.registerHook(WorldGuardHook.class)
+        );
 
         // service
         componentService.registerComponent(GenCashHoeService.class);

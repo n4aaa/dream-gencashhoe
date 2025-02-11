@@ -21,6 +21,7 @@ allprojects {
         mavenCentral()
         maven("https://repo.dreamcode.cc/releases")
         maven("https://storehouse.okaeri.eu/repository/maven-public")
+        maven("https://maven.enginehub.org/repo/")
     }
 }
 

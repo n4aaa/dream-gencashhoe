@@ -19,6 +19,8 @@ import eu.okaeri.tasker.core.Tasker;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Player;
 
+import java.util.List;
+
 @Command(name = "hoe", aliases = "motyka")
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class HoeCommand implements CommandBase {
@@ -30,12 +32,13 @@ public class HoeCommand implements CommandBase {
     private final Tasker tasker;
 
     @Async
+    @Permission("dream-gencashhoe.give")
     @Completion(arg="target", value="@allplayers")
     @Executor(path = "give", description = "Nadaje podanemu graczu motykę.")
     public void give(Player player, @Arg Player target, @Arg int size) {
-        final HoeItem hoeItem = genCashHoeService.getHoeItem(size);
+        List<HoeItem> hoeItems = genCashHoeService.getHoeList(size);
 
-        if (hoeItem == null) {
+        if (hoeItems.isEmpty()) {
             this.messageConfig.hoeDoNotExits.send(player);
 
             return;
@@ -44,12 +47,22 @@ public class HoeCommand implements CommandBase {
         this.messageConfig.hoeGive.send(player, new MapBuilder<String, Object>().put("target", target.getName()).build());
         this.messageConfig.hoeReceive.send(target, new MapBuilder<String, Object>().put("player", player.getName()).build());
 
-        ItemBuilder itemBuilder = ItemBuilder.of(hoeItem.getItemStack().clone()).fixColors();
+        hoeItems.forEach(hoeItem -> {
+            ItemBuilder itemBuilder = ItemBuilder.of(hoeItem.getItemStack().clone());
 
-        InventoryUtil.giveItem(target, itemBuilder.toItemStack());
+            if (hoeItem.isDefaultLore()) {
+                itemBuilder.setLore(pluginConfig.templateHoeLore);
+            }
+
+            InventoryUtil.giveItem(target, itemBuilder.withNbt(this.genCashHoePlugin, "id", String.valueOf(hoeItem.getId())).fixColors(new MapBuilder<String, Object>()
+                    .put("size", hoeItem.getSize()).build())
+                    .toItemStack()
+            );
+        });
     }
 
     @Async
+    @Permission("dream-gencashhoe.custom")
     @Executor(path = "custom", description = "Tworzy customową motykę.")
     public void custom(Player player) {
         this.tasker.newChain()
@@ -64,6 +77,7 @@ public class HoeCommand implements CommandBase {
     }
 
     @Async
+    @Permission("dream-gencashhoe.create")
     @Executor(path = "create", description = "Tworzy motykę o podanym rozmiarze.")
     public void create(Player player, @Arg int size) {
         this.messageConfig.hoeCreate.send(player);
@@ -73,6 +87,7 @@ public class HoeCommand implements CommandBase {
     }
 
     @Async
+    @Permission("dream-gencashhoe.reload")
     @Executor(path = "reload", description = "Przeladowuje konfiguracje.")
     BukkitNotice reload() {
         final long time = System.currentTimeMillis();

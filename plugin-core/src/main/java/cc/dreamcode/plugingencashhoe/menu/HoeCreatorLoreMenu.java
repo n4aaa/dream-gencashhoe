@@ -9,8 +9,8 @@ import cc.dreamcode.plugingencashhoe.GenCashHoeService;
 import cc.dreamcode.plugingencashhoe.HoeCreatorItem;
 import cc.dreamcode.plugingencashhoe.config.MessageConfig;
 import cc.dreamcode.plugingencashhoe.config.PluginConfig;
+import cc.dreamcode.utilities.builder.MapBuilder;
 import cc.dreamcode.utilities.bukkit.builder.ItemBuilder;
-import com.cryptomorin.xseries.XMaterial;
 import eu.okaeri.injector.annotation.Inject;
 import eu.okaeri.tasker.core.Tasker;
 import lombok.NonNull;
@@ -20,7 +20,6 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
@@ -56,6 +55,8 @@ public class HoeCreatorLoreMenu implements BukkitMenuPaginatedPlayerSetup {
                                 .execute();
                     }
                 });
+
+                return;
             }
 
             if (slot == this.pluginConfig.iconLoreMenuAddLineSlot) {
@@ -68,7 +69,6 @@ public class HoeCreatorLoreMenu implements BukkitMenuPaginatedPlayerSetup {
                             itemBuilder.appendLore("");
 
                             this.hoeItem.setItemStack(itemBuilder.toItemStack());
-
                             this.tasker.newChain()
                                     .supplyAsync(() -> this.build(player))
                                     .acceptSync(newMenu -> newMenu.open(0, player))
@@ -76,7 +76,11 @@ public class HoeCreatorLoreMenu implements BukkitMenuPaginatedPlayerSetup {
                         }
                     }
                 });
+
+                return;
             }
+
+            bukkitMenu.setItem(slot, ItemBuilder.of(item).fixColors().toItemStack());
         });
 
         final BukkitMenuPaginated bukkitMenuPaginated = bukkitMenu.toPaginated();
@@ -88,38 +92,34 @@ public class HoeCreatorLoreMenu implements BukkitMenuPaginatedPlayerSetup {
             bukkitMenuPaginated.setNextPageSlot(this.pluginConfig.iconLoreMenuNextPageSlot, doer -> this.messageConfig.lastPageReach.send(doer));
         }
 
+        bukkitMenuPaginated.getStorageItemSlots().removeIf(slot -> this.pluginConfig.iconLoreMenuIgnoreSlots.contains(slot));
+
         if (this.hoeItem.getItemStack().hasItemMeta()) {
             List<String> lore = this.hoeItem.getItemStack().getItemMeta().getLore();
 
             IntStream.range(0, lore.size()).forEach(i -> {
                 String line = lore.get(i);
 
-                bukkitMenuPaginated.addStorageItem(ItemBuilder.of(XMaterial.PAPER.parseMaterial()).setName(!line.isEmpty() ? line : "&cPusta linia!").fixColors().toItemStack(), e -> {
+                bukkitMenuPaginated.addStorageItem(ItemBuilder.of(pluginConfig.iconLoreMenuTemplate).fixColors(new MapBuilder<String, Object>().put("line", !line.isEmpty() ? line : "&cPusta linia!").build()).toItemStack(), e -> {
                     if (e.getWhoClicked() instanceof Player) {
                         Player player = (Player) e.getWhoClicked();
 
-                        switch (e.getClick()) {
-                            case LEFT:
-                            case RIGHT: {
-                                this.genCashHoeService.addToLoreEditors(player.getUniqueId(), i, this.hoeItem);
-                                player.closeInventory();
+                        if (!e.isShiftClick()) {
+                            this.genCashHoeService.addToLoreEditors(player.getUniqueId(), i, this.hoeItem);
+                            player.closeInventory();
 
-                                this.messageConfig.provideText.send(player);
-                            }
+                            this.messageConfig.provideTextLine.send(player);
 
-                            case SHIFT_LEFT:
-                            case SHIFT_RIGHT: {
-                                ItemBuilder itemBuilder = ItemBuilder.of(this.hoeItem.getItemStack());
-                                itemBuilder.setLore(lore.remove(i));
-
-                                this.hoeItem.setItemStack(itemBuilder.toItemStack());
-
-                                this.tasker.newChain()
-                                        .supplyAsync(() -> this.build(player))
-                                        .acceptSync(newMenu -> newMenu.open(0, player))
-                                        .execute();
-                            }
+                            return;
                         }
+
+                        lore.remove(i);
+
+                        this.hoeItem.setItemStack(ItemBuilder.of(this.hoeItem.getItemStack()).setLore(lore).toItemStack());
+                        this.tasker.newChain()
+                                .supplyAsync(() -> this.build(player))
+                                .acceptSync(newMenu -> newMenu.open(0, player))
+                                .execute();
                     }
                 });
             });

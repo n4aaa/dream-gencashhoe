@@ -21,6 +21,7 @@ public class HoeItemSerializer implements ObjectSerializer<HoeItem> {
     public void serialize(@NonNull HoeItem object, @NonNull SerializationData data, @NonNull GenericsDeclaration generics) {
         data.add("hoe-id", object.getId());
         data.add("hoe-itemstack", object.getItemStack());
+        data.add("hoe-default-lore", object.isDefaultLore());
         data.add("hoe-size", object.getSize());
         data.add("hoe-breakables", object.getBreakables());
     }
@@ -30,6 +31,7 @@ public class HoeItemSerializer implements ObjectSerializer<HoeItem> {
         return new HoeItem(
                 data.get("hoe-id", Integer.class),
                 data.get("hoe-itemstack", ItemStack.class),
+                data.get("hoe-default-lore", Boolean.class),
                 data.get("hoe-size", Integer.class),
                 data.getAsList("hoe-breakables", XMaterial.class)
         );

@@ -4,15 +4,17 @@ repositories {
     maven("https://repo.codemc.io/repository/nms")
     maven("https://repo.codemc.io/repository/maven-public")
     maven("https://oss.sonatype.org/content/repositories/snapshots")
+    maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
 }
 
 dependencies {
     // -- spigot api -- (base)
-    compileOnly("org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT")
+    compileOnly("org.spigotmc:spigot-api:1.13.2-R0.1-SNAPSHOT")
 
     // -- dream-platform --
     implementation("cc.dreamcode.platform:core:1.12.9")
     implementation("cc.dreamcode.platform:bukkit:1.12.9")
+    implementation("cc.dreamcode.platform:bukkit-hook:1.12.9")
     implementation("cc.dreamcode.platform:bukkit-config:1.12.9")
     implementation("cc.dreamcode.platform:dream-command:1.12.9")
 
@@ -57,6 +59,9 @@ dependencies {
 
     // -- Multi-Version Items helper --
     implementation("com.github.cryptomorin:XSeries:11.3.0")
+
+    // -- WorldGuard api --
+    compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.0")
 }
 
 tasks.withType<ShadowJar> {

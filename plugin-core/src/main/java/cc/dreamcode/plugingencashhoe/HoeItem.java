@@ -12,6 +12,8 @@ public class HoeItem {
 
     private final ItemStack itemStack;
 
+    private final boolean defaultLore;
+
     private final int size;
     private final List<XMaterial> breakables;
 }

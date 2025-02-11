@@ -16,10 +16,16 @@ public class MessageConfig extends OkaeriConfig {
 
     @CustomKey("provide-text")
     public BukkitNotice provideText = BukkitNotice.subtitle("&aWprowadz tekst na chat");
+    @CustomKey("provide-text-line")
+    public BukkitNotice provideTextLine = BukkitNotice.subtitle("&aWprowadz tekst lini na chat");
+    @CustomKey("provide-enchant-level")
+    public BukkitNotice provideEnchantLevel = BukkitNotice.subtitle("&aWprowadz level enchantu na chat");
     @CustomKey("name-changed")
     public BukkitNotice nameChanged = BukkitNotice.chat("&7Nazwa zostala &azmieniona&7!");
     @CustomKey("lore-line-changed")
     public BukkitNotice loreLineChanged = BukkitNotice.chat("&7Linia opisu zostala &azmieniona&7!");
+    @CustomKey("enchant-add")
+    public BukkitNotice enchantAdd = BukkitNotice.chat("&7Enchant został &adodany&7!");
 
     @CustomKey(value="hoe-do-not-exist")
     public BukkitNotice hoeDoNotExits = BukkitNotice.chat("&cPodana motyka nie istnieje!");

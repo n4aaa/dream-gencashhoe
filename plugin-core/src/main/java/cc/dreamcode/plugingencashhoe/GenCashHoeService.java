@@ -8,8 +8,10 @@ import cc.dreamcode.utilities.object.Duo;
 import eu.okaeri.injector.annotation.Inject;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.enchantments.Enchantment;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class GenCashHoeService {
@@ -20,22 +22,23 @@ public class GenCashHoeService {
 
     private final Map<UUID, HoeCreatorItem> nameEditors = new HashMap<>();
     private final Map<UUID, Duo<HoeCreatorItem, Integer>> loreEditors = new HashMap<>();
+    private final Map<UUID, Duo<HoeCreatorItem, Enchantment>> enchantEditors = new HashMap<>();
 
     public HoeItem buildDefaultHoe(int size) {
-        ItemBuilder itemBuilder = ItemBuilder.of(pluginConfig.defaultHoeItemStack);
+        ItemBuilder itemBuilder = ItemBuilder.of(pluginConfig.templateHoeItemStack);
         itemBuilder.fixColors(new MapBuilder<String, Object>()
                 .put("size", String.valueOf(size))
                 .build());
 
-        return new HoeItem(pluginConfig.hoes.size() + 1, itemBuilder.toItemStack(), size, pluginConfig.defaultHoeBreakables);
+        return new HoeItem(pluginConfig.hoes.size() + 1, itemBuilder.toItemStack(), true, size, new ArrayList<>());
     }
     public HoeCreatorItem buildDefaultCreatorHoe(int size) {
-        ItemBuilder itemBuilder = ItemBuilder.of(pluginConfig.defaultHoeItemStack);
+        ItemBuilder itemBuilder = ItemBuilder.of(pluginConfig.templateHoeItemStack);
         itemBuilder.fixColors(new MapBuilder<String, Object>()
                 .put("size", String.valueOf(size))
                 .build());
 
-        return new HoeCreatorItem(pluginConfig.hoes.size() + 1, itemBuilder.toItemStack(), size, pluginConfig.defaultHoeBreakables);
+        return new HoeCreatorItem(pluginConfig.hoes.size() + 1, itemBuilder.toItemStack(), size, new ArrayList<>());
     }
 
     public boolean isNameEditor(@NonNull UUID uuid) {
@@ -64,7 +67,22 @@ public class GenCashHoeService {
         this.loreEditors.remove(uuid);
     }
 
-    public HoeItem getHoeItem(int size) {
-        return pluginConfig.hoes.stream().filter(hoeItem -> hoeItem.getSize() == size).findFirst().orElse(null);
+    public boolean isEnchantEditor(@NonNull UUID uuid) {
+        return this.enchantEditors.containsKey(uuid);
+    }
+    public Duo<HoeCreatorItem, Enchantment> getEnchantEditor(@NonNull UUID uuid) {
+        return this.enchantEditors.get(uuid);
+    }
+    public void addToEnchantEditors(@NonNull UUID uuid, @NonNull Enchantment enchantment, @NonNull HoeCreatorItem hoeCreatorItem) {
+        this.enchantEditors.put(uuid, Duo.of(hoeCreatorItem, enchantment));
+    }
+    public void removeFromEnchantEditors(@NonNull UUID uuid) {
+        this.enchantEditors.remove(uuid);
+    }
+    public HoeItem getHoe(int id) {
+        return pluginConfig.hoes.stream().filter(hoeItem -> hoeItem.getId() == id).findFirst().orElse(null);
+    }
+    public List<HoeItem> getHoeList(int size) {
+        return pluginConfig.hoes.stream().filter(hoeItem -> hoeItem.getSize() == size).collect(Collectors.toList());
     }
 }
