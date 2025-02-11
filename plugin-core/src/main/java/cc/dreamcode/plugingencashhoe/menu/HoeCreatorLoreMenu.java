@@ -38,7 +38,6 @@ public class HoeCreatorLoreMenu implements BukkitMenuPaginatedPlayerSetup {
     public BukkitMenuPaginated build(@NonNull HumanEntity humanEntity) {
         final BukkitMenuBuilder menuBuilder = this.pluginConfig.hoeCreatorLoreMenuBuilder;
         final BukkitMenu bukkitMenu = menuBuilder.buildEmpty();
-        final BukkitMenuPaginated bukkitMenuPaginated = bukkitMenu.toPaginated();
 
         menuBuilder.getItems().forEach((slot, item) -> {
             if (slot == this.pluginConfig.iconLoreMenuCloseSlot) {
@@ -48,7 +47,7 @@ public class HoeCreatorLoreMenu implements BukkitMenuPaginatedPlayerSetup {
 
                         this.tasker.newChain()
                                 .supplyAsync(() -> {
-                                    final HoeCreatorMenu hoeCreatorMenu = this.genCashHoePlugin.createInstance(HoeCreatorMenu.class);
+                                    HoeCreatorMenu hoeCreatorMenu = this.genCashHoePlugin.createInstance(HoeCreatorMenu.class);
                                     hoeCreatorMenu.setHoeItem(this.hoeItem);
 
                                     return hoeCreatorMenu.build(player);
@@ -71,12 +70,7 @@ public class HoeCreatorLoreMenu implements BukkitMenuPaginatedPlayerSetup {
                             this.hoeItem.setItemStack(itemBuilder.toItemStack());
 
                             this.tasker.newChain()
-                                    .supplyAsync(() -> {
-                                        final HoeCreatorLoreMenu hoeCreatorLoreMenu = this.genCashHoePlugin.createInstance(HoeCreatorLoreMenu.class);
-                                        hoeCreatorLoreMenu.setHoeItem(hoeItem);
-
-                                        return hoeCreatorLoreMenu.build(player);
-                                    })
+                                    .supplyAsync(() -> this.build(player))
                                     .acceptSync(newMenu -> newMenu.open(0, player))
                                     .execute();
                         }
@@ -85,6 +79,7 @@ public class HoeCreatorLoreMenu implements BukkitMenuPaginatedPlayerSetup {
             }
         });
 
+        final BukkitMenuPaginated bukkitMenuPaginated = bukkitMenu.toPaginated();
 
         if (this.pluginConfig.iconLoreMenuPreviousPageSlot != -1) {
             bukkitMenuPaginated.setPreviousPageSlot(this.pluginConfig.iconLoreMenuPreviousPageSlot, doer -> this.messageConfig.firstPageReach.send(doer));
@@ -103,10 +98,28 @@ public class HoeCreatorLoreMenu implements BukkitMenuPaginatedPlayerSetup {
                     if (e.getWhoClicked() instanceof Player) {
                         Player player = (Player) e.getWhoClicked();
 
-                        this.genCashHoeService.addToLoreEditors(player.getUniqueId(), i, this.hoeItem);
-                        player.closeInventory();
+                        switch (e.getClick()) {
+                            case LEFT:
+                            case RIGHT: {
+                                this.genCashHoeService.addToLoreEditors(player.getUniqueId(), i, this.hoeItem);
+                                player.closeInventory();
 
-                        this.messageConfig.provideText.send(player);
+                                this.messageConfig.provideText.send(player);
+                            }
+
+                            case SHIFT_LEFT:
+                            case SHIFT_RIGHT: {
+                                ItemBuilder itemBuilder = ItemBuilder.of(this.hoeItem.getItemStack());
+                                itemBuilder.setLore(lore.remove(i));
+
+                                this.hoeItem.setItemStack(itemBuilder.toItemStack());
+
+                                this.tasker.newChain()
+                                        .supplyAsync(() -> this.build(player))
+                                        .acceptSync(newMenu -> newMenu.open(0, player))
+                                        .execute();
+                            }
+                        }
                     }
                 });
             });
