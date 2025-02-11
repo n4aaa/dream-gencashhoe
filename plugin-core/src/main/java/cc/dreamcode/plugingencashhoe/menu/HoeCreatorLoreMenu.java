@@ -100,7 +100,7 @@ public class HoeCreatorLoreMenu implements BukkitMenuPaginatedPlayerSetup {
             IntStream.range(0, lore.size()).forEach(i -> {
                 String line = lore.get(i);
 
-                bukkitMenuPaginated.addStorageItem(ItemBuilder.of(pluginConfig.iconLoreMenuTemplate).fixColors(new MapBuilder<String, Object>().put("line", !line.isEmpty() ? line : "&cPusta linia!").build()).toItemStack(), e -> {
+                bukkitMenuPaginated.addStorageItem(ItemBuilder.of(pluginConfig.iconLoreMenuTemplate.clone()).fixColors(new MapBuilder<String, Object>().put("line", !line.isEmpty() ? line : "&cPusta linia!").build()).toItemStack(), e -> {
                     if (e.getWhoClicked() instanceof Player) {
                         Player player = (Player) e.getWhoClicked();
 

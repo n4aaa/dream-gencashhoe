@@ -58,7 +58,7 @@ dependencies {
     implementation("eu.okaeri:okaeri-tasker-bukkit:2.1.0-beta.3")
 
     // -- Multi-Version Items helper --
-    implementation("com.github.cryptomorin:XSeries:11.3.0")
+    implementation("com.github.cryptomorin:XSeries:13.0.0")
 
     // -- WorldGuard api --
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.0")

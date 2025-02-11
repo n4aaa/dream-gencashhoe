@@ -12,6 +12,7 @@ import cc.dreamcode.plugingencashhoe.config.PluginConfig;
 import cc.dreamcode.utilities.builder.MapBuilder;
 import cc.dreamcode.utilities.bukkit.builder.ItemBuilder;
 import com.cryptomorin.xseries.XMaterial;
+import com.cryptomorin.xseries.base.XBase;
 import eu.okaeri.injector.annotation.Inject;
 import eu.okaeri.tasker.core.Tasker;
 import lombok.NonNull;
@@ -78,7 +79,7 @@ public class HoeCreatorBlocksMenu implements BukkitMenuPaginatedPlayerSetup {
 
         List<XMaterial> breakables = hoeItem.getBreakables();
         Arrays.stream(Material.values()).filter(Material::isSolid).collect(Collectors.toList()).stream().filter(material -> !breakables.contains(XMaterial.matchXMaterial(material))).forEach(material -> {
-            bukkitMenuPaginated.addStorageItem(ItemBuilder.of(this.pluginConfig.iconBreakablesMenuTemplate).setType(material).fixColors(new MapBuilder<String, Object>().put("name", material.name().toLowerCase()).build()).toItemStack(), e -> {
+            bukkitMenuPaginated.addStorageItem(ItemBuilder.of(this.pluginConfig.iconBreakablesMenuTemplate.clone()).fixColors(new MapBuilder<String, Object>().put("name", material.name().toLowerCase()).build()).setType(material).toItemStack(), e -> {
                 if (e.getWhoClicked() instanceof Player) {
                     Player player = (Player) e.getWhoClicked();
 

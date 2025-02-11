@@ -79,7 +79,7 @@ public class HoeCreatorEnchantMenu implements BukkitMenuPaginatedPlayerSetup {
 
         Map<Enchantment, Integer> enchantments = hoeItem.getItemStack().getEnchantments();
         Arrays.stream(Enchantment.values()).collect(Collectors.toList()).stream().filter(enchantment -> !enchantments.containsKey(enchantment)).forEach(enchantment -> {
-            bukkitMenuPaginated.addStorageItem(ItemBuilder.of(this.pluginConfig.iconEnchantMenuTemplate).fixColors(new MapBuilder<String, Object>().put("name", enchantment.getName().toLowerCase()).build()).toItemStack(), e -> {
+            bukkitMenuPaginated.addStorageItem(ItemBuilder.of(this.pluginConfig.iconEnchantMenuTemplate.clone()).fixColors(new MapBuilder<String, Object>().put("name", enchantment.getName().toLowerCase()).build()).toItemStack(), e -> {
                 if (e.getWhoClicked() instanceof Player) {
                     Player player = (Player) e.getWhoClicked();
 
