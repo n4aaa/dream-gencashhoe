@@ -1,4 +1,4 @@
-package cc.dreamcode.plugingencashhoe.command.handler;
+package cc.dreamcode.gencashhoe.command.handler;
 
 import cc.dreamcode.command.CommandInput;
 import cc.dreamcode.command.CommandMeta;
@@ -6,7 +6,7 @@ import cc.dreamcode.command.CommandPathMeta;
 import cc.dreamcode.command.DreamSender;
 import cc.dreamcode.command.bukkit.BukkitSender;
 import cc.dreamcode.command.handler.InvalidUsageHandler;
-import cc.dreamcode.plugingencashhoe.config.MessageConfig;
+import cc.dreamcode.gencashhoe.config.MessageConfig;
 import cc.dreamcode.utilities.builder.MapBuilder;
 import eu.okaeri.injector.annotation.Inject;
 import lombok.NonNull;

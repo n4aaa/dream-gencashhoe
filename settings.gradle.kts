@@ -1,3 +1,3 @@
-rootProject.name = "dream-plugingencashhoe"
+rootProject.name = "dream-gencashhoe"
 
 include(":plugin-core")

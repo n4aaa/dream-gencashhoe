@@ -1,4 +1,4 @@
-package cc.dreamcode.plugingencashhoe;
+package cc.dreamcode.gencashhoe;
 
 import com.cryptomorin.xseries.XMaterial;
 import lombok.AllArgsConstructor;

@@ -1,6 +1,6 @@
-package cc.dreamcode.plugingencashhoe;
+package cc.dreamcode.gencashhoe;
 
-import cc.dreamcode.plugingencashhoe.config.PluginConfig;
+import cc.dreamcode.gencashhoe.config.PluginConfig;
 import cc.dreamcode.utilities.builder.MapBuilder;
 import cc.dreamcode.utilities.bukkit.builder.ItemBuilder;
 import cc.dreamcode.utilities.object.Duo;

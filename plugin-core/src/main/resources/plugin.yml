@@ -1,4 +1,4 @@
-main: "cc.dreamcode.plugingencashhoe.GenCashHoePlugin"
+main: "cc.dreamcode.gencashhoe.GenCashHoePlugin"
 version: "1.0-InDEV"
 name: "Dream-GenCashHoe"
 description: "Dream-GenCashHoe plugin written by dreamcode.cc"

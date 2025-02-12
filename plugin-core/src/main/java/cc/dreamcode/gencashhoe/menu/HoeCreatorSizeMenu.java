@@ -1,11 +1,11 @@
-package cc.dreamcode.plugingencashhoe.menu;
+package cc.dreamcode.gencashhoe.menu;
 
 import cc.dreamcode.menu.adventure.BukkitMenuBuilder;
 import cc.dreamcode.menu.adventure.base.BukkitMenu;
 import cc.dreamcode.menu.adventure.setup.BukkitMenuPlayerSetup;
-import cc.dreamcode.plugingencashhoe.GenCashHoePlugin;
-import cc.dreamcode.plugingencashhoe.HoeCreatorItem;
-import cc.dreamcode.plugingencashhoe.config.PluginConfig;
+import cc.dreamcode.gencashhoe.GenCashHoePlugin;
+import cc.dreamcode.gencashhoe.HoeCreatorItem;
+import cc.dreamcode.gencashhoe.config.PluginConfig;
 import cc.dreamcode.utilities.builder.MapBuilder;
 import cc.dreamcode.utilities.bukkit.builder.ItemBuilder;
 import eu.okaeri.injector.annotation.Inject;

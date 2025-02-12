@@ -1,33 +1,32 @@
-package cc.dreamcode.plugingencashhoe.menu;
+package cc.dreamcode.gencashhoe.menu;
 
 import cc.dreamcode.menu.adventure.BukkitMenuBuilder;
 import cc.dreamcode.menu.adventure.base.BukkitMenu;
 import cc.dreamcode.menu.adventure.base.BukkitMenuPaginated;
 import cc.dreamcode.menu.adventure.setup.BukkitMenuPaginatedPlayerSetup;
-import cc.dreamcode.plugingencashhoe.GenCashHoePlugin;
-import cc.dreamcode.plugingencashhoe.GenCashHoeService;
-import cc.dreamcode.plugingencashhoe.HoeCreatorItem;
-import cc.dreamcode.plugingencashhoe.config.MessageConfig;
-import cc.dreamcode.plugingencashhoe.config.PluginConfig;
+import cc.dreamcode.gencashhoe.GenCashHoePlugin;
+import cc.dreamcode.gencashhoe.GenCashHoeService;
+import cc.dreamcode.gencashhoe.HoeCreatorItem;
+import cc.dreamcode.gencashhoe.config.MessageConfig;
+import cc.dreamcode.gencashhoe.config.PluginConfig;
 import cc.dreamcode.utilities.builder.MapBuilder;
 import cc.dreamcode.utilities.bukkit.builder.ItemBuilder;
+import com.cryptomorin.xseries.XMaterial;
 import eu.okaeri.injector.annotation.Inject;
 import eu.okaeri.tasker.core.Tasker;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.bukkit.enchantments.Enchantment;
+import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public class HoeCreatorEnchantMenu implements BukkitMenuPaginatedPlayerSetup {
+public class HoeCreatorBlocksMenu implements BukkitMenuPaginatedPlayerSetup {
 
     private final GenCashHoePlugin genCashHoePlugin;
     private final PluginConfig pluginConfig;
@@ -39,11 +38,11 @@ public class HoeCreatorEnchantMenu implements BukkitMenuPaginatedPlayerSetup {
 
     @Override
     public BukkitMenuPaginated build(@NonNull HumanEntity humanEntity) {
-        final BukkitMenuBuilder menuBuilder = this.pluginConfig.hoeCreatorEnchantMenuBuilder;
+        final BukkitMenuBuilder menuBuilder = this.pluginConfig.hoeCreatorBreakablesMenuBuilder;
         final BukkitMenu bukkitMenu = menuBuilder.buildEmpty();
 
         menuBuilder.getItems().forEach((slot, item) -> {
-            if (slot == this.pluginConfig.iconEnchantMenuCloseSlot) {
+            if (slot == this.pluginConfig.iconBreakablesMenuCloseSlot) {
                 bukkitMenu.setItem(slot, ItemBuilder.of(item).fixColors().toItemStack(), e -> {
                     if (e.getWhoClicked() instanceof Player) {
                         Player player = (Player) e.getWhoClicked();
@@ -68,25 +67,31 @@ public class HoeCreatorEnchantMenu implements BukkitMenuPaginatedPlayerSetup {
 
         final BukkitMenuPaginated bukkitMenuPaginated = bukkitMenu.toPaginated();
 
-        if (this.pluginConfig.iconEnchantMenuPreviousPageSlot != -1) {
-            bukkitMenuPaginated.setPreviousPageSlot(this.pluginConfig.iconEnchantMenuPreviousPageSlot, doer -> this.messageConfig.firstPageReach.send(doer));
+        if (this.pluginConfig.iconBreakablesMenuPreviousPageSlot != -1) {
+            bukkitMenuPaginated.setPreviousPageSlot(this.pluginConfig.iconBreakablesMenuPreviousPageSlot, doer -> this.messageConfig.firstPageReach.send(doer));
         }
-        if (this.pluginConfig.iconEnchantMenuNextPageSlot != -1) {
-            bukkitMenuPaginated.setNextPageSlot(this.pluginConfig.iconEnchantMenuNextPageSlot, doer -> this.messageConfig.lastPageReach.send(doer));
+        if (this.pluginConfig.iconBreakablesMenuNextPageSlot != -1) {
+            bukkitMenuPaginated.setNextPageSlot(this.pluginConfig.iconBreakablesMenuNextPageSlot, doer -> this.messageConfig.lastPageReach.send(doer));
         }
 
-        bukkitMenuPaginated.getStorageItemSlots().removeIf(slot -> this.pluginConfig.iconEnchantMenuIgnoreSlots.contains(slot));
+        bukkitMenuPaginated.getStorageItemSlots().removeIf(slot -> this.pluginConfig.iconBreakablesMenuIgnoreSlots.contains(slot));
 
-        Map<Enchantment, Integer> enchantments = hoeItem.getItemStack().getEnchantments();
-        Arrays.stream(Enchantment.values()).collect(Collectors.toList()).stream().filter(enchantment -> !enchantments.containsKey(enchantment)).forEach(enchantment -> {
-            bukkitMenuPaginated.addStorageItem(ItemBuilder.of(this.pluginConfig.iconEnchantMenuTemplate.clone()).fixColors(new MapBuilder<String, Object>().put("name", enchantment.getName().toLowerCase()).build()).toItemStack(), e -> {
+        List<XMaterial> breakables = hoeItem.getBreakables();
+        Arrays.stream(Material.values()).filter(Material::isSolid).collect(Collectors.toList()).stream().filter(material -> !breakables.contains(XMaterial.matchXMaterial(material))).forEach(material -> {
+            bukkitMenuPaginated.addStorageItem(ItemBuilder.of(this.pluginConfig.iconBreakablesMenuTemplate.clone()).fixColors(new MapBuilder<String, Object>().put("name", material.name().toLowerCase()).build()).setType(material).toItemStack(), e -> {
                 if (e.getWhoClicked() instanceof Player) {
                     Player player = (Player) e.getWhoClicked();
 
-                    this.genCashHoeService.addToEnchantEditors(player.getUniqueId(), enchantment, this.hoeItem);
-                    player.closeInventory();
+                    this.hoeItem.getBreakables().add(XMaterial.matchXMaterial(material));
+                    this.tasker.newChain()
+                            .supplyAsync(() -> {
+                                HoeCreatorMenu hoeCreatorMenu = this.genCashHoePlugin.createInstance(HoeCreatorMenu.class);
+                                hoeCreatorMenu.setHoeItem(this.hoeItem);
 
-                    this.messageConfig.provideEnchantLevel.send(player);
+                                return hoeCreatorMenu.build(player);
+                            })
+                            .acceptSync(newMenu -> newMenu.open(player))
+                            .execute();
                 }
             });
         });

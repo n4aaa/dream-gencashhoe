@@ -10,7 +10,7 @@ idea {
 }
 
 allprojects {
-    group = "cc.dreamcode.plugingencashhoe"
+    group = "cc.dreamcode.gencashhoe"
     version = "1.0-InDEV"
 
     apply(plugin = "java-library")

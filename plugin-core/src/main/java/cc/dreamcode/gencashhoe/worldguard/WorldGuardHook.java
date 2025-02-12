@@ -1,4 +1,4 @@
-package cc.dreamcode.plugingencashhoe.worldguard;
+package cc.dreamcode.gencashhoe.worldguard;
 
 import cc.dreamcode.platform.bukkit.hook.PluginHook;
 import cc.dreamcode.platform.bukkit.hook.annotation.Hook;
@@ -22,7 +22,7 @@ public class WorldGuardHook implements PluginHook {
         this.worldGuard = WorldGuard.getInstance();
     }
 
-    public boolean handleRegion(WorldGuardHook worldGuardHook, List<String> blockedRegions, Location location) {
+    public boolean isProtected(WorldGuardHook worldGuardHook, List<String> blockedRegions, Location location) {
         WorldGuard worldGuard = worldGuardHook.getWorldGuard();
 
         RegionContainer regionContainer = worldGuard.getPlatform().getRegionContainer();

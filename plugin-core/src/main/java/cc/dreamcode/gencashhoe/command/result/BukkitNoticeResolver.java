@@ -1,4 +1,4 @@
-package cc.dreamcode.plugingencashhoe.command.result;
+package cc.dreamcode.gencashhoe.command.result;
 
 import cc.dreamcode.command.DreamSender;
 import cc.dreamcode.command.bukkit.BukkitSender;

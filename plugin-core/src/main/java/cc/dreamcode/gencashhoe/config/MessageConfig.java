@@ -1,4 +1,4 @@
-package cc.dreamcode.plugingencashhoe.config;
+package cc.dreamcode.gencashhoe.config;
 
 import cc.dreamcode.notice.bukkit.BukkitNotice;
 import cc.dreamcode.platform.bukkit.component.configuration.Configuration;
@@ -9,7 +9,7 @@ import eu.okaeri.configs.annotation.Headers;
 
 @Configuration(child = "message.yml")
 @Headers({
-        @Header("## Dream-plugingencashhoe (Message-Config) ##"),
+        @Header("## Dream-GenCashHoe (Message-Config) ##"),
         @Header("Dostepne type: (DO_NOT_SEND, CHAT, ACTION_BAR, SUBTITLE, TITLE, TITLE_SUBTITLE)")
 })
 public class MessageConfig extends OkaeriConfig {
@@ -26,6 +26,8 @@ public class MessageConfig extends OkaeriConfig {
     public BukkitNotice loreLineChanged = BukkitNotice.chat("&7Linia opisu zostala &azmieniona&7!");
     @CustomKey("enchant-add")
     public BukkitNotice enchantAdd = BukkitNotice.chat("&7Enchant został &adodany&7!");
+    @CustomKey("cant-destroy")
+    public BukkitNotice cantDestory = BukkitNotice.chat("&cNie możesz niszczyć tego motyką!");
 
     @CustomKey(value="hoe-do-not-exist")
     public BukkitNotice hoeDoNotExits = BukkitNotice.chat("&cPodana motyka nie istnieje!");

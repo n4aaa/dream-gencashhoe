@@ -44,10 +44,6 @@ dependencies {
     implementation("eu.okaeri:okaeri-configs-serdes-bukkit:5.0.2")
     implementation("eu.okaeri:okaeri-configs-serdes-commons:5.0.2")
 
-    // -- persistence data configure --
-    implementation("eu.okaeri:okaeri-configs-json-gson:5.0.2")
-    implementation("eu.okaeri:okaeri-configs-json-simple:5.0.2")
-
     // -- injector --
     implementation("eu.okaeri:okaeri-injector:2.1.0")
 
@@ -68,20 +64,13 @@ tasks.withType<ShadowJar> {
 
     archiveFileName.set("Dream-GenCashHoe-${project.version}.jar")
 
-    relocate("com.cryptomorin", "cc.dreamcode.plugingencashhoe.libs.com.cryptomorin")
-    relocate("eu.okaeri", "cc.dreamcode.plugingencashhoe.libs.eu.okaeri")
-    relocate("net.kyori", "cc.dreamcode.plugingencashhoe.libs.net.kyori")
+    relocate("com.cryptomorin", "cc.dreamcode.gencashhoe.libs.com.cryptomorin")
+    relocate("eu.okaeri", "cc.dreamcode.gencashhoe.libs.eu.okaeri")
+    relocate("net.kyori", "cc.dreamcode.gencashhoe.libs.net.kyori")
 
-    relocate("cc.dreamcode.platform", "cc.dreamcode.plugingencashhoe.libs.cc.dreamcode.platform")
-    relocate("cc.dreamcode.utilities", "cc.dreamcode.plugingencashhoe.libs.cc.dreamcode.utilities")
-    relocate("cc.dreamcode.menu", "cc.dreamcode.plugingencashhoe.libs.cc.dreamcode.menu")
-    relocate("cc.dreamcode.command", "cc.dreamcode.plugingencashhoe.libs.cc.dreamcode.command")
-    relocate("cc.dreamcode.notice", "cc.dreamcode.plugingencashhoe.libs.cc.dreamcode.notice")
-
-    relocate("org.bson", "cc.dreamcode.plugingencashhoe.libs.org.bson")
-    relocate("com.mongodb", "cc.dreamcode.plugingencashhoe.libs.com.mongodb")
-    relocate("com.zaxxer", "cc.dreamcode.plugingencashhoe.libs.com.zaxxer")
-    relocate("org.slf4j", "cc.dreamcode.plugingencashhoe.libs.org.slf4j")
-    relocate("org.json", "cc.dreamcode.plugingencashhoe.libs.org.json")
-    relocate("com.google.gson", "cc.dreamcode.plugingencashhoe.libs.com.google.gson")
+    relocate("cc.dreamcode.platform", "cc.dreamcode.gencashhoe.libs.cc.dreamcode.platform")
+    relocate("cc.dreamcode.utilities", "cc.dreamcode.gencashhoe.libs.cc.dreamcode.utilities")
+    relocate("cc.dreamcode.menu", "cc.dreamcode.gencashhoe.libs.cc.dreamcode.menu")
+    relocate("cc.dreamcode.command", "cc.dreamcode.gencashhoe.libs.cc.dreamcode.command")
+    relocate("cc.dreamcode.notice", "cc.dreamcode.gencashhoe.libs.cc.dreamcode.notice")
 }

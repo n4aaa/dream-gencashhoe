@@ -1,14 +1,14 @@
-package cc.dreamcode.plugingencashhoe.command;
+package cc.dreamcode.gencashhoe.command;
 
 import cc.dreamcode.command.CommandBase;
 import cc.dreamcode.command.annotation.*;
 import cc.dreamcode.notice.bukkit.BukkitNotice;
-import cc.dreamcode.plugingencashhoe.GenCashHoePlugin;
-import cc.dreamcode.plugingencashhoe.GenCashHoeService;
-import cc.dreamcode.plugingencashhoe.HoeItem;
-import cc.dreamcode.plugingencashhoe.config.MessageConfig;
-import cc.dreamcode.plugingencashhoe.config.PluginConfig;
-import cc.dreamcode.plugingencashhoe.menu.HoeCreatorMenu;
+import cc.dreamcode.gencashhoe.GenCashHoePlugin;
+import cc.dreamcode.gencashhoe.GenCashHoeService;
+import cc.dreamcode.gencashhoe.HoeItem;
+import cc.dreamcode.gencashhoe.config.MessageConfig;
+import cc.dreamcode.gencashhoe.config.PluginConfig;
+import cc.dreamcode.gencashhoe.menu.HoeCreatorMenu;
 import cc.dreamcode.utilities.TimeUtil;
 import cc.dreamcode.utilities.builder.MapBuilder;
 import cc.dreamcode.utilities.bukkit.InventoryUtil;

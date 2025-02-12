@@ -1,9 +1,9 @@
-package cc.dreamcode.plugingencashhoe.config;
+package cc.dreamcode.gencashhoe.config;
 
 import cc.dreamcode.menu.adventure.BukkitMenuBuilder;
 import cc.dreamcode.menu.utilities.MenuUtil;
 import cc.dreamcode.platform.bukkit.component.configuration.Configuration;
-import cc.dreamcode.plugingencashhoe.HoeItem;
+import cc.dreamcode.gencashhoe.HoeItem;
 import cc.dreamcode.utilities.builder.ListBuilder;
 import cc.dreamcode.utilities.builder.MapBuilder;
 import cc.dreamcode.utilities.bukkit.builder.ItemBuilder;

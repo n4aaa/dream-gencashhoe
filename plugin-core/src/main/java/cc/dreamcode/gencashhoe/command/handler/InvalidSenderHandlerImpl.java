@@ -1,9 +1,9 @@
-package cc.dreamcode.plugingencashhoe.command.handler;
+package cc.dreamcode.gencashhoe.command.handler;
 
 import cc.dreamcode.command.DreamSender;
 import cc.dreamcode.command.bukkit.BukkitSender;
 import cc.dreamcode.command.handler.InvalidSenderHandler;
-import cc.dreamcode.plugingencashhoe.config.MessageConfig;
+import cc.dreamcode.gencashhoe.config.MessageConfig;
 import eu.okaeri.injector.annotation.Inject;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

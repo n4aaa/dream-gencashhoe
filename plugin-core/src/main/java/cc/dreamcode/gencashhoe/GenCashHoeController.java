@@ -1,12 +1,12 @@
-package cc.dreamcode.plugingencashhoe;
+package cc.dreamcode.gencashhoe;
 
 import cc.dreamcode.platform.bukkit.hook.PluginHookManager;
-import cc.dreamcode.plugingencashhoe.config.MessageConfig;
-import cc.dreamcode.plugingencashhoe.config.PluginConfig;
-import cc.dreamcode.plugingencashhoe.menu.HoeCreatorEnchantMenu;
-import cc.dreamcode.plugingencashhoe.menu.HoeCreatorLoreMenu;
-import cc.dreamcode.plugingencashhoe.menu.HoeCreatorMenu;
-import cc.dreamcode.plugingencashhoe.worldguard.WorldGuardHook;
+import cc.dreamcode.gencashhoe.config.MessageConfig;
+import cc.dreamcode.gencashhoe.config.PluginConfig;
+import cc.dreamcode.gencashhoe.menu.HoeCreatorEnchantMenu;
+import cc.dreamcode.gencashhoe.menu.HoeCreatorLoreMenu;
+import cc.dreamcode.gencashhoe.menu.HoeCreatorMenu;
+import cc.dreamcode.gencashhoe.worldguard.WorldGuardHook;
 import cc.dreamcode.utilities.bukkit.builder.ItemBuilder;
 import cc.dreamcode.utilities.bukkit.nbt.ItemNbtUtil;
 import cc.dreamcode.utilities.object.Duo;
@@ -55,11 +55,11 @@ public class GenCashHoeController implements Listener {
 
             this.messageConfig.nameChanged.send(player);
 
-            this.tasker.newChain().sync(() -> {
+            this.tasker.newChain().supplyAsync(() -> {
                 HoeCreatorMenu hoeCreatorMenu = this.genCashHoePlugin.createInstance(HoeCreatorMenu.class);
                 hoeCreatorMenu.setHoeItem(hoeCreatorItem);
-                hoeCreatorMenu.build(player).open(player);
-            }).execute();
+                return hoeCreatorMenu.build(player);
+            }).acceptSync(menu -> menu.open(player)).execute();
 
             this.genCashHoeService.removeFromNameEditors(player.getUniqueId());
 
@@ -89,11 +89,11 @@ public class GenCashHoeController implements Listener {
 
             this.messageConfig.loreLineChanged.send(player);
 
-            this.tasker.newChain().sync(() -> {
+            this.tasker.newChain().supplyAsync(() -> {
                 HoeCreatorLoreMenu hoeCreatorLoreMenu = this.genCashHoePlugin.createInstance(HoeCreatorLoreMenu.class);
                 hoeCreatorLoreMenu.setHoeItem(hoeCreatorItem);
-                hoeCreatorLoreMenu.build(player).open(0, player);
-            }).execute();
+                return hoeCreatorLoreMenu.build(player);
+            }).acceptSync(menu -> menu.open(0, player)).execute();
 
             this.genCashHoeService.removeFromLoreEditors(player.getUniqueId());
 
@@ -121,11 +121,11 @@ public class GenCashHoeController implements Listener {
 
                 this.messageConfig.enchantAdd.send(player);
 
-                this.tasker.newChain().sync(() -> {
+                this.tasker.newChain().supplyAsync(() -> {
                     HoeCreatorEnchantMenu hoeCreatorEnchantMenu = this.genCashHoePlugin.createInstance(HoeCreatorEnchantMenu.class);
                     hoeCreatorEnchantMenu.setHoeItem(hoeCreatorItem);
-                    hoeCreatorEnchantMenu.build(player).open(0, player);
-                }).execute();
+                    return hoeCreatorEnchantMenu.build(player);
+                }).acceptSync(menu -> menu.open(0, player)).execute();
             } catch (NumberFormatException e) {
                 this.messageConfig.numberIsNotValid.send(player);
             }
@@ -162,30 +162,37 @@ public class GenCashHoeController implements Listener {
 
                     event.setCancelled(true);
 
-                    if (this.pluginHookManager.get(WorldGuardHook.class).isPresent()) {
-                        WorldGuardHook worldGuardHook = this.pluginHookManager.get(WorldGuardHook.class).get();
-                        if (worldGuardHook.handleRegion(worldGuardHook, pluginConfig.blockedRegions, event.getClickedBlock().getLocation())) {
-                            return;
+                    int evenBlocks = Math.abs(hoeItem.getSize()) % 2 == 0 ? 1 : 0;
+                    int radius = (hoeItem.getSize() - evenBlocks) / 2;
+
+                    boolean displayWarning = false;
+
+                    for (int x = -radius; x <= radius - evenBlocks; x++) {
+                        for (int z = -radius; z <= radius - evenBlocks; z++) {
+                            Block block = event.getClickedBlock().getLocation().clone().add(x, 0, z).getBlock();
+
+                            if (block.getType() != Material.AIR) {
+                                if (this.pluginHookManager.get(WorldGuardHook.class).isPresent()) {
+                                    WorldGuardHook worldGuardHook = this.pluginHookManager.get(WorldGuardHook.class).get();
+                                    if (worldGuardHook.isProtected(worldGuardHook, pluginConfig.blockedRegions, event.getClickedBlock().getLocation())) {
+                                        continue;
+                                    }
+                                }
+
+                                if (!hoeItem.getBreakables().isEmpty() && !hoeItem.getBreakables().contains(XMaterial.matchXMaterial(block.getType()))) {
+                                    displayWarning = true;
+
+                                    continue;
+                                }
+
+                                block.breakNaturally();
+                                this.genCashHoePlugin.getServer().getPluginManager().callEvent(new BlockBreakEvent(block, player));
+                            }
                         }
                     }
 
-                    for (int x = -hoeItem.getSize() / 2; x <= hoeItem.getSize() / 2; ++x) {
-                        for (int y = 0; y < hoeItem.getSize(); ++y) {
-                            for (int z = -hoeItem.getSize() / 2; z <= hoeItem.getSize() / 2; ++z) {
-                                if (event.getClickedBlock() != null) {
-                                    Block block = event.getClickedBlock().getLocation().clone().add(x, y, z).getBlock();
-
-                                    if (block.getType() != Material.AIR) {
-                                        if (!hoeItem.getBreakables().isEmpty() && !hoeItem.getBreakables().contains(XMaterial.matchXMaterial(block.getType()))) {
-                                            continue;
-                                        }
-
-                                        block.breakNaturally();
-                                        this.genCashHoePlugin.getServer().getPluginManager().callEvent(new BlockBreakEvent(block, player));
-                                    }
-                                }
-                            }
-                        }
+                    if (displayWarning) {
+                        this.messageConfig.cantDestory.send(player);
                     }
                 }
             }
