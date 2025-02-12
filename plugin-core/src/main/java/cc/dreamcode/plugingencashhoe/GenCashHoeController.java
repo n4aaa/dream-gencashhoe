@@ -50,12 +50,12 @@ public class GenCashHoeController implements Listener {
             HoeCreatorItem hoeCreatorItem = this.genCashHoeService.getNameEditor(player.getUniqueId());
             String message = event.getMessage();
 
+            ItemBuilder itemBuilder = ItemBuilder.of(hoeCreatorItem.getItemStack());
+            hoeCreatorItem.setItemStack(itemBuilder.setName(message).fixColors().toItemStack());
+
+            this.messageConfig.nameChanged.send(player);
+
             this.tasker.newChain().sync(() -> {
-                ItemBuilder itemBuilder = ItemBuilder.of(hoeCreatorItem.getItemStack());
-                hoeCreatorItem.setItemStack(itemBuilder.setName(message).fixColors().toItemStack());
-
-                this.messageConfig.nameChanged.send(player);
-
                 HoeCreatorMenu hoeCreatorMenu = this.genCashHoePlugin.createInstance(HoeCreatorMenu.class);
                 hoeCreatorMenu.setHoeItem(hoeCreatorItem);
                 hoeCreatorMenu.build(player).open(player);
@@ -75,19 +75,21 @@ public class GenCashHoeController implements Listener {
 
             String message = event.getMessage();
 
-            this.tasker.newChain().sync(() -> {
-                if (hoeCreatorItem.getItemStack().hasItemMeta()) {
-                    List<String> lore = hoeCreatorItem.getItemStack().getItemMeta().getLore();
+            if (hoeCreatorItem.getItemStack().hasItemMeta()) {
+                List<String> lore = hoeCreatorItem.getItemStack().getItemMeta().getLore();
+                if (!lore.isEmpty()) {
                     lore.set(index, message);
-
-                    ItemBuilder itemBuilder = ItemBuilder.of(hoeCreatorItem.getItemStack());
-                    itemBuilder.setLore(lore);
-
-                    hoeCreatorItem.setItemStack(itemBuilder.fixColors().toItemStack());
                 }
 
-                this.messageConfig.loreLineChanged.send(player);
+                ItemBuilder itemBuilder = ItemBuilder.of(hoeCreatorItem.getItemStack());
+                itemBuilder.setLore(lore);
 
+                hoeCreatorItem.setItemStack(itemBuilder.fixColors().toItemStack());
+            }
+
+            this.messageConfig.loreLineChanged.send(player);
+
+            this.tasker.newChain().sync(() -> {
                 HoeCreatorLoreMenu hoeCreatorLoreMenu = this.genCashHoePlugin.createInstance(HoeCreatorLoreMenu.class);
                 hoeCreatorLoreMenu.setHoeItem(hoeCreatorItem);
                 hoeCreatorLoreMenu.build(player).open(0, player);
@@ -110,16 +112,16 @@ public class GenCashHoeController implements Listener {
             try {
                 int number = Integer.parseInt(message);
 
+                if (hoeCreatorItem.getItemStack().hasItemMeta()) {
+                    ItemBuilder itemBuilder = ItemBuilder.of(hoeCreatorItem.getItemStack());
+                    itemBuilder.addEnchant(enchantment, number);
+
+                    hoeCreatorItem.setItemStack(itemBuilder.fixColors().toItemStack());
+                }
+
+                this.messageConfig.enchantAdd.send(player);
+
                 this.tasker.newChain().sync(() -> {
-                    if (hoeCreatorItem.getItemStack().hasItemMeta()) {
-                        ItemBuilder itemBuilder = ItemBuilder.of(hoeCreatorItem.getItemStack());
-                        itemBuilder.addEnchant(enchantment, number);
-
-                        hoeCreatorItem.setItemStack(itemBuilder.fixColors().toItemStack());
-                    }
-
-                    this.messageConfig.enchantAdd.send(player);
-
                     HoeCreatorEnchantMenu hoeCreatorEnchantMenu = this.genCashHoePlugin.createInstance(HoeCreatorEnchantMenu.class);
                     hoeCreatorEnchantMenu.setHoeItem(hoeCreatorItem);
                     hoeCreatorEnchantMenu.build(player).open(0, player);
@@ -159,12 +161,6 @@ public class GenCashHoeController implements Listener {
                     }
 
                     event.setCancelled(true);
-                    this.pluginHookManager.get(WorldGuardHook.class).map(worldGuardHook -> {
-
-                        return null;
-                    });
-
-
 
                     if (this.pluginHookManager.get(WorldGuardHook.class).isPresent()) {
                         WorldGuardHook worldGuardHook = this.pluginHookManager.get(WorldGuardHook.class).get();
@@ -176,15 +172,17 @@ public class GenCashHoeController implements Listener {
                     for (int x = -hoeItem.getSize() / 2; x <= hoeItem.getSize() / 2; ++x) {
                         for (int y = 0; y < hoeItem.getSize(); ++y) {
                             for (int z = -hoeItem.getSize() / 2; z <= hoeItem.getSize() / 2; ++z) {
-                                Block block = event.getClickedBlock().getLocation().clone().add(x, y, z).getBlock();
+                                if (event.getClickedBlock() != null) {
+                                    Block block = event.getClickedBlock().getLocation().clone().add(x, y, z).getBlock();
 
-                                if (block.getType() != Material.AIR) {
-                                    if (!hoeItem.getBreakables().isEmpty() && !hoeItem.getBreakables().contains(XMaterial.matchXMaterial(block.getType()))) {
-                                        continue;
+                                    if (block.getType() != Material.AIR) {
+                                        if (!hoeItem.getBreakables().isEmpty() && !hoeItem.getBreakables().contains(XMaterial.matchXMaterial(block.getType()))) {
+                                            continue;
+                                        }
+
+                                        block.breakNaturally();
+                                        this.genCashHoePlugin.getServer().getPluginManager().callEvent(new BlockBreakEvent(block, player));
                                     }
-
-                                    block.breakNaturally();
-                                    this.genCashHoePlugin.getServer().getPluginManager().callEvent(new BlockBreakEvent(block, player));
                                 }
                             }
                         }

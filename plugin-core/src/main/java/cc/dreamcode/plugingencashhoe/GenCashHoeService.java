@@ -1,6 +1,5 @@
 package cc.dreamcode.plugingencashhoe;
 
-import cc.dreamcode.plugingencashhoe.config.MessageConfig;
 import cc.dreamcode.plugingencashhoe.config.PluginConfig;
 import cc.dreamcode.utilities.builder.MapBuilder;
 import cc.dreamcode.utilities.bukkit.builder.ItemBuilder;
@@ -16,9 +15,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class GenCashHoeService {
 
-    private final GenCashHoePlugin genCashHoePlugin;
     private final PluginConfig pluginConfig;
-    private final MessageConfig messageConfig;
 
     private final Map<UUID, HoeCreatorItem> nameEditors = new HashMap<>();
     private final Map<UUID, Duo<HoeCreatorItem, Integer>> loreEditors = new HashMap<>();

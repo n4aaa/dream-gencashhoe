@@ -6,4 +6,4 @@ website: "https://dreamcode.cc"
 author: "n4a_"
 api-version: 1.13
 softdepend:
-  - Vault
+  - WorldGuard
