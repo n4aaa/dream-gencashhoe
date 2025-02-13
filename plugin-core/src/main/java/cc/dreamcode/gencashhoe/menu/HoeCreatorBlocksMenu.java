@@ -76,13 +76,12 @@ public class HoeCreatorBlocksMenu implements BukkitMenuPaginatedPlayerSetup {
 
         bukkitMenuPaginated.getStorageItemSlots().removeIf(slot -> this.pluginConfig.iconBreakablesMenuIgnoreSlots.contains(slot));
 
-        List<XMaterial> breakables = hoeItem.getBreakables();
-        Arrays.stream(Material.values()).filter(Material::isSolid).collect(Collectors.toList()).stream().filter(material -> !breakables.contains(XMaterial.matchXMaterial(material))).forEach(material -> {
-            bukkitMenuPaginated.addStorageItem(ItemBuilder.of(this.pluginConfig.iconBreakablesMenuTemplate.clone()).fixColors(new MapBuilder<String, Object>().put("name", material.name().toLowerCase()).build()).setType(material).toItemStack(), e -> {
+        this.genCashHoeService.getMaterialsPresenter().stream().filter(materialPresenter -> !hoeItem.getBreakables().contains(XMaterial.matchXMaterial(materialPresenter.getType()))).forEach(materialPresenter -> {
+            bukkitMenuPaginated.addStorageItem(materialPresenter.clone(), e -> {
                 if (e.getWhoClicked() instanceof Player) {
                     Player player = (Player) e.getWhoClicked();
 
-                    this.hoeItem.getBreakables().add(XMaterial.matchXMaterial(material));
+                    this.hoeItem.getBreakables().add(XMaterial.matchXMaterial(materialPresenter.getType()));
                     this.tasker.newChain()
                             .supplyAsync(() -> {
                                 HoeCreatorMenu hoeCreatorMenu = this.genCashHoePlugin.createInstance(HoeCreatorMenu.class);

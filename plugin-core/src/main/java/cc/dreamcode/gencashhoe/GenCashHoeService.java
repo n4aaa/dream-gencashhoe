@@ -5,9 +5,13 @@ import cc.dreamcode.utilities.builder.MapBuilder;
 import cc.dreamcode.utilities.bukkit.builder.ItemBuilder;
 import cc.dreamcode.utilities.object.Duo;
 import eu.okaeri.injector.annotation.Inject;
+import eu.okaeri.injector.annotation.PostConstruct;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -20,6 +24,18 @@ public class GenCashHoeService {
     private final Map<UUID, HoeCreatorItem> nameEditors = new HashMap<>();
     private final Map<UUID, Duo<HoeCreatorItem, Integer>> loreEditors = new HashMap<>();
     private final Map<UUID, Duo<HoeCreatorItem, Enchantment>> enchantEditors = new HashMap<>();
+
+    @Getter private final List<ItemStack> materialsPresenter = new ArrayList<>();
+    @Getter private final Map<Enchantment, ItemStack> enchantsPresenter = new HashMap<>();
+
+    @PostConstruct
+    public void loadPresenters() {
+        this.materialsPresenter.clear();
+        this.enchantsPresenter.clear();
+
+        Arrays.stream(Material.values()).filter(Material::isSolid).collect(Collectors.toList()).forEach(material -> this.materialsPresenter.add(ItemBuilder.of(this.pluginConfig.iconBreakablesMenuTemplate.clone()).fixColors(new MapBuilder<String, Object>().put("name", material.name().toLowerCase()).build()).setType(material).toItemStack()));
+        Arrays.stream(Enchantment.values()).collect(Collectors.toList()).forEach(enchantment -> this.enchantsPresenter.put(enchantment, ItemBuilder.of(this.pluginConfig.iconEnchantMenuTemplate.clone()).fixColors(new MapBuilder<String, Object>().put("name", enchantment.getName().toLowerCase()).build()).toItemStack()));
+    }
 
     public HoeItem buildDefaultHoe(int size) {
         ItemBuilder itemBuilder = ItemBuilder.of(pluginConfig.templateHoeItemStack);

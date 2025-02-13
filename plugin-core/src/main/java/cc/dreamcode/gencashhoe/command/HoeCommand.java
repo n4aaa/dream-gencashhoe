@@ -96,6 +96,8 @@ public class HoeCommand implements CommandBase {
             this.messageConfig.load();
             this.pluginConfig.load();
 
+            this.genCashHoeService.loadPresenters();
+
             return this.messageConfig.reloaded
                     .with("time", TimeUtil.format(System.currentTimeMillis() - time));
         }

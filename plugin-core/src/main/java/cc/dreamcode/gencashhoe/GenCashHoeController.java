@@ -14,6 +14,7 @@ import com.cryptomorin.xseries.XMaterial;
 import eu.okaeri.injector.annotation.Inject;
 import eu.okaeri.tasker.core.Tasker;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
@@ -51,7 +52,7 @@ public class GenCashHoeController implements Listener {
             String message = event.getMessage();
 
             ItemBuilder itemBuilder = ItemBuilder.of(hoeCreatorItem.getItemStack());
-            hoeCreatorItem.setItemStack(itemBuilder.setName(message).fixColors().toItemStack());
+            hoeCreatorItem.setItemStack(itemBuilder.setName(message).toItemStack());
 
             this.messageConfig.nameChanged.send(player);
 
@@ -84,7 +85,7 @@ public class GenCashHoeController implements Listener {
                 ItemBuilder itemBuilder = ItemBuilder.of(hoeCreatorItem.getItemStack());
                 itemBuilder.setLore(lore);
 
-                hoeCreatorItem.setItemStack(itemBuilder.fixColors().toItemStack());
+                hoeCreatorItem.setItemStack(itemBuilder.toItemStack());
             }
 
             this.messageConfig.loreLineChanged.send(player);
@@ -116,19 +117,19 @@ public class GenCashHoeController implements Listener {
                     ItemBuilder itemBuilder = ItemBuilder.of(hoeCreatorItem.getItemStack());
                     itemBuilder.addEnchant(enchantment, number);
 
-                    hoeCreatorItem.setItemStack(itemBuilder.fixColors().toItemStack());
+                    hoeCreatorItem.setItemStack(itemBuilder.toItemStack());
                 }
 
                 this.messageConfig.enchantAdd.send(player);
-
-                this.tasker.newChain().supplyAsync(() -> {
-                    HoeCreatorEnchantMenu hoeCreatorEnchantMenu = this.genCashHoePlugin.createInstance(HoeCreatorEnchantMenu.class);
-                    hoeCreatorEnchantMenu.setHoeItem(hoeCreatorItem);
-                    return hoeCreatorEnchantMenu.build(player);
-                }).acceptSync(menu -> menu.open(0, player)).execute();
             } catch (NumberFormatException e) {
                 this.messageConfig.numberIsNotValid.send(player);
             }
+
+            this.tasker.newChain().supplyAsync(() -> {
+                HoeCreatorEnchantMenu hoeCreatorEnchantMenu = this.genCashHoePlugin.createInstance(HoeCreatorEnchantMenu.class);
+                hoeCreatorEnchantMenu.setHoeItem(hoeCreatorItem);
+                return hoeCreatorEnchantMenu.build(player);
+            }).acceptSync(menu -> menu.open(0, player)).execute();
 
             this.genCashHoeService.removeFromEnchantEditors(player.getUniqueId());
 
@@ -162,26 +163,22 @@ public class GenCashHoeController implements Listener {
 
                     event.setCancelled(true);
 
-                    int evenBlocks = Math.abs(hoeItem.getSize()) % 2 == 0 ? 1 : 0;
-                    int radius = (hoeItem.getSize() - evenBlocks) / 2;
+                    int size = hoeItem.getSize();
+                    int radius = size / 2;
 
                     boolean displayWarning = false;
 
-                    for (int x = -radius; x <= radius - evenBlocks; x++) {
-                        for (int z = -radius; z <= radius - evenBlocks; z++) {
+                    for (int x = -radius; x < radius + (size % 2 == 0 ? 0 : 1); x++) {
+                        for (int z = -radius; z < radius + (size % 2 == 0 ? 0 : 1); z++) {
                             Block block = event.getClickedBlock().getLocation().clone().add(x, 0, z).getBlock();
 
                             if (block.getType() != Material.AIR) {
-                                if (this.pluginHookManager.get(WorldGuardHook.class).isPresent()) {
-                                    WorldGuardHook worldGuardHook = this.pluginHookManager.get(WorldGuardHook.class).get();
-                                    if (worldGuardHook.isProtected(worldGuardHook, pluginConfig.blockedRegions, event.getClickedBlock().getLocation())) {
-                                        continue;
-                                    }
+                                if (this.checkRegion(event.getClickedBlock().getLocation())) {
+                                    continue;
                                 }
 
                                 if (!hoeItem.getBreakables().isEmpty() && !hoeItem.getBreakables().contains(XMaterial.matchXMaterial(block.getType()))) {
                                     displayWarning = true;
-
                                     continue;
                                 }
 
@@ -199,5 +196,13 @@ public class GenCashHoeController implements Listener {
         }
     }
 
+    private boolean checkRegion(Location location) {
+        if (this.pluginHookManager.get(WorldGuardHook.class).isPresent()) {
+            WorldGuardHook worldGuardHook = this.pluginHookManager.get(WorldGuardHook.class).get();
 
+            return worldGuardHook.isProtected(worldGuardHook, pluginConfig.blockedRegions, location);
+        }
+
+        return false;
+    }
 }
