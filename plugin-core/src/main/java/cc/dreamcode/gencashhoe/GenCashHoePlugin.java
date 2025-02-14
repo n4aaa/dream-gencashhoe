@@ -84,7 +84,7 @@ public final class GenCashHoePlugin extends DreamBukkitPlatform implements Dream
 
     @Override
     public @NonNull DreamVersion getDreamVersion() {
-        return DreamVersion.create("Dream-GenCashHoe", "1.0-InDEV", "n4a_");
+        return DreamVersion.create("Dream-GenCashHoe", "1.0", "n4a_");
     }
 
     @Override

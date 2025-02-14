@@ -11,7 +11,7 @@ idea {
 
 allprojects {
     group = "cc.dreamcode.gencashhoe"
-    version = "1.0-InDEV"
+    version = "1.0"
 
     apply(plugin = "java-library")
     apply(plugin = "com.gradleup.shadow")
