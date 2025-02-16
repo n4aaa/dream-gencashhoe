@@ -42,7 +42,7 @@ dependencies {
     // -- configs--
     implementation("eu.okaeri:okaeri-configs-yaml-bukkit:5.0.2")
     implementation("eu.okaeri:okaeri-configs-serdes-bukkit:5.0.2")
-    implementation("eu.okaeri:okaeri-configs-serdes-commons:5.0.2")
+    implementation("eu.okaeri:okaeri-configs-serdes-commons:5.0.6")
 
     // -- injector --
     implementation("eu.okaeri:okaeri-injector:2.1.0")
