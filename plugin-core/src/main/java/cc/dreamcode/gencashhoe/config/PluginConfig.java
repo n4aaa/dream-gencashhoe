@@ -1,5 +1,6 @@
 package cc.dreamcode.gencashhoe.config;
 
+import cc.dreamcode.gencashhoe.HoeMode;
 import cc.dreamcode.menu.adventure.BukkitMenuBuilder;
 import cc.dreamcode.menu.utilities.MenuUtil;
 import cc.dreamcode.platform.bukkit.component.configuration.Configuration;
@@ -12,11 +13,13 @@ import eu.okaeri.configs.OkaeriConfig;
 import eu.okaeri.configs.annotation.Comment;
 import eu.okaeri.configs.annotation.CustomKey;
 import eu.okaeri.configs.annotation.Header;
+import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Configuration(child = "config.yml")
 @Header("## Dream-GenCashHoe (Main-Config) ##")
@@ -37,9 +40,14 @@ public class PluginConfig extends OkaeriConfig {
     );
 
     @Comment
+    @Comment("Skonfiguruj tryb motyki - w jaki sposob maja działać dodane bloki (WHITELIST/BLACKLIST):")
+    @CustomKey("hoe-mode")
+    public HoeMode hoeMode = HoeMode.WHITELIST;
+
+    @Comment
     @Comment("Skonfiguruj menu dla kreatora motyki:")
     @CustomKey("hoe-creator-menu-builder")
-    public BukkitMenuBuilder hoeCreatorMenuBuilder = new BukkitMenuBuilder("&8Tworzenie motyki", 3, new MapBuilder<Integer, ItemStack>()
+    public BukkitMenuBuilder hoeCreatorMenuBuilder = new BukkitMenuBuilder("&8Tworzenie motyki", 5, new MapBuilder<Integer, ItemStack>()
             .put(10, ItemBuilder.of(XMaterial.PAPER.parseItem())
                     .setName("&9&lUstaw rozmiar")
                     .setLore("&8» &7Obecny rozmiar: &a&l{size}x{size}",
@@ -56,19 +64,25 @@ public class PluginConfig extends OkaeriConfig {
                     .setName("&9&lUstaw opis")
                     .setLore("", "&8» &7Kliknj &fLPM&7, aby przejść dalej!")
                     .toItemStack())
-            .put(13, ItemBuilder.of(XMaterial.ENCHANTED_BOOK.parseItem())
+            .put(14, ItemBuilder.of(XMaterial.ENCHANTED_BOOK.parseItem())
                     .setName("&9&lEnchanty")
                     .setLore("&8» &7Enchanty: &b{enchants}",
                             "",
                             "&8» &7Kliknj &fLPM&7, aby przejść dalej!")
                     .toItemStack())
-            .put(14, ItemBuilder.of(XMaterial.GRASS_BLOCK.parseItem())
+            .put(15, ItemBuilder.of(XMaterial.GRASS_BLOCK.parseItem())
                     .setName("&9&lBloki")
                     .setLore("&8» &7Bloki: &c{blocks}",
                             "",
                             "&8» &7Kliknj &fLPM&7, aby przejść dalej!")
                     .toItemStack())
-            .put(16, ItemBuilder.of(XMaterial.LIME_DYE.parseItem())
+            .put(16, ItemBuilder.of(XMaterial.ORANGE_BANNER.parseItem())
+                    .setName("&9&lFlagi przedmiotu")
+                    .setLore("&8» &7Flagi przedmiotu: &c{flags}",
+                            "",
+                            "&8» &7Kliknj &fLPM&7, aby przejść dalej!")
+                    .toItemStack())
+            .put(31, ItemBuilder.of(XMaterial.LIME_DYE.parseItem())
                     .setName("&a&lStwórz motykę")
                     .setLore("", "&8» &7Kliknj &fLPM&7, aby stworzyć motykę!")
                     .toItemStack())
@@ -85,13 +99,16 @@ public class PluginConfig extends OkaeriConfig {
     public int iconMenuSetLoreSlot = 12;
     @Comment("Skonfiguruj slot przycisku zmiany enchantów w kreatorze motyki:")
     @CustomKey("icon-menu-set-enchants-slot")
-    public int iconMenuSetEnchantsSlot = 13;
+    public int iconMenuSetEnchantsSlot = 14;
     @Comment("Skonfiguruj slot przycisku zmiany dozwolonych bloków w kreatorze motyki:")
     @CustomKey("icon-menu-set-blocks-slot")
-    public int iconMenuSetBlocksSlot = 14;
+    public int iconMenuSetBlocksSlot = 15;
+    @Comment("Skonfiguruj slot przycisku zmiany dozwolonych bloków w kreatorze motyki:")
+    @CustomKey("icon-menu-set-flags-slot")
+    public int iconMenuSetFlagsSlot = 16;
     @Comment("Skonfiguruj slot przycisku tworzenia motyki w kreatorze motyki:")
     @CustomKey("icon-menu-create-hoe-slot")
-    public int iconMenuCreateHoeSlot = 16;
+    public int iconMenuCreateHoeSlot = 31;
 
     @Comment
     @Comment("Skonfiguruj menu dla kreatora motyki (rozmiar):")
@@ -200,6 +217,47 @@ public class PluginConfig extends OkaeriConfig {
     public int iconEnchantMenuCloseSlot = MenuUtil.countSlot(6, 5);
 
     @Comment
+    @Comment("Skonfiguruj menu dla kreatora motyki (flagi):")
+    @CustomKey("hoe-creator-flag-menu-builder")
+    public BukkitMenuBuilder hoeCreatorFlagMenuBuilder = new BukkitMenuBuilder("&8Tworzenie motyki (flagi)", 6, new MapBuilder<Integer, ItemStack>()
+            .put(MenuUtil.countSlot(6, 4), ItemBuilder.of(XMaterial.ARROW.parseItem())
+                    .setName("&cPowrot do poprzedniej strony")
+                    .setLore("", "&8» &7Kliknij, aby zmienic strone!")
+                    .toItemStack())
+            .put(MenuUtil.countSlot(6, 5), ItemBuilder.of(XMaterial.BARRIER.parseItem())
+                    .setName("&cPowrot do menu glownego")
+                    .toItemStack())
+            .put(MenuUtil.countSlot(6, 6), ItemBuilder.of(XMaterial.ARROW.parseItem())
+                    .setName("&aPrzejdz do nastepnej strony")
+                    .setLore("", "&8» &7Kliknij, aby zmienic strone!")
+                    .toItemStack())
+            .build());
+    @Comment("Skonfiguruj ignorowane sloty w menu dla kreatora motyki (flagi):")
+    @CustomKey(value="icon-flag-menu-ignore-slots")
+    public List<Integer> iconFlagMenuIgnoreSlots = ListBuilder.of(MenuUtil.countSlot(1, 1), MenuUtil.countSlot(1, 2), MenuUtil.countSlot(1, 3), MenuUtil.countSlot(1, 4), MenuUtil.countSlot(1, 5), MenuUtil.countSlot(1, 6), MenuUtil.countSlot(1, 7), MenuUtil.countSlot(1, 8), MenuUtil.countSlot(1, 9), MenuUtil.countSlot(2, 1), MenuUtil.countSlot(2, 9), MenuUtil.countSlot(3, 1), MenuUtil.countSlot(3, 9), MenuUtil.countSlot(4, 1), MenuUtil.countSlot(4, 9), MenuUtil.countSlot(5, 1), MenuUtil.countSlot(5, 9), MenuUtil.countSlot(6, 1), MenuUtil.countSlot(6, 2), MenuUtil.countSlot(6, 3), MenuUtil.countSlot(6, 4), MenuUtil.countSlot(6, 5), MenuUtil.countSlot(6, 6), MenuUtil.countSlot(6, 7), MenuUtil.countSlot(6, 8), MenuUtil.countSlot(6, 9));
+    @Comment("Skonfiguruj przykładowa aktywna flage edytorze flag:")
+    @CustomKey(value="icon-flag-active-menu-template")
+    public ItemStack iconFlagActiveMenuTemplate = ItemBuilder.of(XMaterial.GREEN_BANNER.parseItem())
+            .setName("&aUsuń flagę")
+            .setLore("&8» &7Flaga: &f{name}", "", "&8» &7Kliknij &fLPM&7, aby usunąć tą flagę")
+            .toItemStack();
+    @Comment("Skonfiguruj przykładowa nie aktywna flage edytorze flag:")
+    @CustomKey(value="icon-flag-no-active-menu-template")
+    public ItemStack iconFlagNoActiveMenuTemplate = ItemBuilder.of(XMaterial.RED_BANNER.parseItem())
+            .setName("&cDodaj flagę")
+            .setLore("&8» &7Flaga: &f{name}", "", "&8» &7Kliknij &fLPM&7, aby dodać tą flagę")
+            .toItemStack();
+    @Comment("Skonfiguruj slot, pod ktorym znajduje sie przycisk nastepnej strony w kreatorze motyki (flagi):")
+    @CustomKey(value="icon-flag-menu-next-page-slot")
+    public int iconFlagMenuNextPageSlot = MenuUtil.countSlot(6, 6);
+    @Comment("Skonfiguruj slot, pod ktorym znajduje sie przycisk poprzedniej strony w kreatorze motyki (flagi):")
+    @CustomKey(value="icon-flag-menu-previous-page-slot")
+    public int iconFlagMenuPreviousPageSlot = MenuUtil.countSlot(6, 4);
+    @Comment("Skonfiguruj slot, pod ktorym znajduje sie przycisk zamkniecia menu w kreatorze motyki (flagi):")
+    @CustomKey(value="icon-flag-menu-close-slot")
+    public int iconFlagMenuCloseSlot = MenuUtil.countSlot(6, 5);
+
+    @Comment
     @Comment("Skonfiguruj menu dla kreatora motyki (bloki):")
     @CustomKey("hoe-creator-breakables-menu-builder")
     public BukkitMenuBuilder hoeCreatorBreakablesMenuBuilder = new BukkitMenuBuilder("&8Tworzenie motyki (bloki)", 6, new MapBuilder<Integer, ItemStack>()
@@ -256,5 +314,10 @@ public class PluginConfig extends OkaeriConfig {
                     Arrays.asList()
             )
     );
+
+    @Comment
+    @Comment("Skonfiguruj materiały:")
+    @CustomKey("materials")
+    public List<Material> materials = Arrays.stream(Material.values()).collect(Collectors.toList());
 }
 

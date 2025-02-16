@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.Map;
 
 @Command(name = "hoe", aliases = "motyka")
 @RequiredArgsConstructor(onConstructor_ = @Inject)
@@ -84,6 +85,20 @@ public class HoeCommand implements CommandBase {
 
         this.pluginConfig.hoes.add(this.genCashHoeService.buildDefaultHoe(size));
         this.pluginConfig.save();
+    }
+
+    @Async
+    @Permission("dream-gencashhoe.list")
+    @Executor(path = "list", description = "Wyswietla liste motyk.")
+    public void list(Player player) {
+        this.messageConfig.hoeList.send(player);
+
+        this.pluginConfig.hoes.forEach(hoeItem -> {
+            this.messageConfig.hoeListElement.send(player, new MapBuilder<String, Object>()
+                    .put("name", hoeItem.getItemStack().getItemMeta().getDisplayName())
+                    .put("size", hoeItem.getSize() + "x" + hoeItem.getSize())
+                    .build());
+        });
     }
 
     @Async

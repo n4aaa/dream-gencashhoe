@@ -75,7 +75,7 @@ public class HoeCreatorEnchantMenu implements BukkitMenuPaginatedPlayerSetup {
 
         bukkitMenuPaginated.getStorageItemSlots().removeIf(slot -> this.pluginConfig.iconEnchantMenuIgnoreSlots.contains(slot));
 
-        this.genCashHoeService.getEnchantsPresenter().forEach((enchantment, enchantmentPresenter) -> {
+        this.genCashHoeService.getEnchantPresenters().forEach((enchantment, enchantmentPresenter) -> {
             bukkitMenuPaginated.addStorageItem(enchantmentPresenter.clone(), e -> {
                 if (e.getWhoClicked() instanceof Player) {
                     Player player = (Player) e.getWhoClicked();

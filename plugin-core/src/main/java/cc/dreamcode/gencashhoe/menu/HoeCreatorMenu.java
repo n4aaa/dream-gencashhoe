@@ -41,7 +41,7 @@ public class HoeCreatorMenu implements BukkitMenuPlayerSetup {
                 .build());
 
         menuBuilder.getItems().forEach((slot, item) -> {
-            if (pluginConfig.iconMenuSetSizeSlot == slot) {
+            if (this.pluginConfig.iconMenuSetSizeSlot == slot) {
                 bukkitMenu.setItem(slot, ItemBuilder.of(item).fixColors(new MapBuilder<String, Object>()
                         .put("size", hoeItem.getSize())
                         .build()).toItemStack(), e -> {
@@ -63,7 +63,7 @@ public class HoeCreatorMenu implements BukkitMenuPlayerSetup {
                 return;
             }
 
-            if (pluginConfig.iconMenuSetNameSlot == slot) {
+            if (this.pluginConfig.iconMenuSetNameSlot == slot) {
                 bukkitMenu.setItem(slot, ItemBuilder.of(item).fixColors(new MapBuilder<String, Object>()
                         .put("name", hoeItem.getItemStack().getItemMeta().getDisplayName())
                         .build()).toItemStack(), e -> {
@@ -80,7 +80,7 @@ public class HoeCreatorMenu implements BukkitMenuPlayerSetup {
                 return;
             }
 
-            if (pluginConfig.iconMenuSetLoreSlot == slot) {
+            if (this.pluginConfig.iconMenuSetLoreSlot == slot) {
                 bukkitMenu.setItem(slot, ItemBuilder.of(item).fixColors().toItemStack(), e -> {
                     if (e.getWhoClicked() instanceof Player) {
                         Player player = (Player) e.getWhoClicked();
@@ -100,7 +100,7 @@ public class HoeCreatorMenu implements BukkitMenuPlayerSetup {
                 return;
             }
 
-            if (pluginConfig.iconMenuSetEnchantsSlot == slot) {
+            if (this.pluginConfig.iconMenuSetEnchantsSlot == slot) {
                 bukkitMenu.setItem(slot, ItemBuilder.of(item).fixColors(new MapBuilder<String, Object>()
                         .put("enchants", (!hoeItem.getItemStack().getItemMeta().getEnchants().isEmpty()) ? hoeItem.getItemStack().getItemMeta().getEnchants().entrySet().stream().map(ench -> ench.getKey().getName().toLowerCase() + " - " + ench.getValue()).collect(Collectors.joining(", ")) : "&cBrak!")
                         .build()).toItemStack(), e -> {
@@ -122,7 +122,7 @@ public class HoeCreatorMenu implements BukkitMenuPlayerSetup {
                 return;
             }
 
-            if (pluginConfig.iconMenuSetBlocksSlot == slot) {
+            if (this.pluginConfig.iconMenuSetBlocksSlot == slot) {
                 bukkitMenu.setItem(slot, ItemBuilder.of(item).fixColors(new MapBuilder<String, Object>()
                         .put("blocks", (!hoeItem.getBreakables().isEmpty()) ? hoeItem.getBreakables().stream().map(breakable -> breakable.name().toLowerCase()).collect(Collectors.joining(", ")) : "&cBrak!")
                         .build()).toItemStack(), e -> {
@@ -144,7 +144,29 @@ public class HoeCreatorMenu implements BukkitMenuPlayerSetup {
                 return;
             }
 
-            if (pluginConfig.iconMenuCreateHoeSlot == slot) {
+            if (this.pluginConfig.iconMenuSetFlagsSlot == slot) {
+                bukkitMenu.setItem(slot, ItemBuilder.of(item).fixColors(new MapBuilder<String, Object>()
+                        .put("flags", (this.hoeItem.getItemStack().getItemMeta() != null || !this.hoeItem.getItemStack().getItemMeta().getItemFlags().isEmpty()) ? this.hoeItem.getItemStack().getItemMeta().getItemFlags().stream().map(breakable -> breakable.name().toLowerCase()).collect(Collectors.joining(", ")) : "&cBrak!")
+                        .build()).toItemStack(), e -> {
+                    if (e.getWhoClicked() instanceof Player) {
+                        Player player = (Player) e.getWhoClicked();
+
+                        this.tasker.newChain()
+                                .supplyAsync(() -> {
+                                    final HoeCreatorFlagMenu hoeCreatorFlagMenu = this.genCashHoePlugin.createInstance(HoeCreatorFlagMenu.class);
+                                    hoeCreatorFlagMenu.setHoeItem(this.hoeItem);
+
+                                    return hoeCreatorFlagMenu.build(player);
+                                })
+                                .acceptSync(newMenu -> newMenu.open(0, player))
+                                .execute();
+                    }
+                });
+
+                return;
+            }
+
+            if (this.pluginConfig.iconMenuCreateHoeSlot == slot) {
                 bukkitMenu.setItem(slot, ItemBuilder.of(item).fixColors().toItemStack(), e -> {
                     if (e.getWhoClicked() instanceof Player) {
                         Player player = (Player) e.getWhoClicked();

@@ -9,8 +9,8 @@ import eu.okaeri.injector.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
@@ -25,16 +25,23 @@ public class GenCashHoeService {
     private final Map<UUID, Duo<HoeCreatorItem, Integer>> loreEditors = new HashMap<>();
     private final Map<UUID, Duo<HoeCreatorItem, Enchantment>> enchantEditors = new HashMap<>();
 
-    @Getter private final List<ItemStack> materialsPresenter = new ArrayList<>();
-    @Getter private final Map<Enchantment, ItemStack> enchantsPresenter = new HashMap<>();
+    @Getter private final List<ItemStack> materialPresenters = new ArrayList<>();
+    @Getter private final Map<ItemFlag, ItemStack> flagActivePresenters = new HashMap<>();
+    @Getter private final Map<ItemFlag, ItemStack> flagNoActivePresenters = new HashMap<>();
+    @Getter private final Map<Enchantment, ItemStack> enchantPresenters = new HashMap<>();
 
     @PostConstruct
     public void loadPresenters() {
-        this.materialsPresenter.clear();
-        this.enchantsPresenter.clear();
+        this.materialPresenters.clear();
+        this.enchantPresenters.clear();
+        this.flagActivePresenters.clear();
+        this.flagNoActivePresenters.clear();
 
-        Arrays.stream(Material.values()).filter(Material::isSolid).collect(Collectors.toList()).forEach(material -> this.materialsPresenter.add(ItemBuilder.of(this.pluginConfig.iconBreakablesMenuTemplate.clone()).fixColors(new MapBuilder<String, Object>().put("name", material.name().toLowerCase()).build()).setType(material).toItemStack()));
-        Arrays.stream(Enchantment.values()).collect(Collectors.toList()).forEach(enchantment -> this.enchantsPresenter.put(enchantment, ItemBuilder.of(this.pluginConfig.iconEnchantMenuTemplate.clone()).fixColors(new MapBuilder<String, Object>().put("name", enchantment.getName().toLowerCase()).build()).toItemStack()));
+        this.pluginConfig.materials.forEach(material -> this.materialPresenters.add(ItemBuilder.of(this.pluginConfig.iconBreakablesMenuTemplate.clone()).fixColors(new MapBuilder<String, Object>().put("name", material.name().toLowerCase()).build()).setType(material).toItemStack()));
+        Arrays.stream(Enchantment.values()).collect(Collectors.toList()).forEach(enchantment -> this.enchantPresenters.put(enchantment, ItemBuilder.of(this.pluginConfig.iconEnchantMenuTemplate.clone()).fixColors(new MapBuilder<String, Object>().put("name", enchantment.getName().toLowerCase()).build()).toItemStack()));
+
+        Arrays.stream(ItemFlag.values()).collect(Collectors.toList()).forEach(flag -> this.flagActivePresenters.put(flag, ItemBuilder.of(this.pluginConfig.iconFlagActiveMenuTemplate.clone()).fixColors(new MapBuilder<String, Object>().put("name", flag.name().toLowerCase()).build()).toItemStack()));
+        Arrays.stream(ItemFlag.values()).collect(Collectors.toList()).forEach(flag -> this.flagNoActivePresenters.put(flag, ItemBuilder.of(this.pluginConfig.iconFlagNoActiveMenuTemplate.clone()).fixColors(new MapBuilder<String, Object>().put("name", flag.name().toLowerCase()).build()).toItemStack()));
     }
 
     public HoeItem buildDefaultHoe(int size) {

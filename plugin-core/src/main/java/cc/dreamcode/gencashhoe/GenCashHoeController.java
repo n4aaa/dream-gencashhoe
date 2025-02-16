@@ -173,13 +173,20 @@ public class GenCashHoeController implements Listener {
                             Block block = event.getClickedBlock().getLocation().clone().add(x, 0, z).getBlock();
 
                             if (block.getType() != Material.AIR) {
-                                if (this.checkRegion(event.getClickedBlock().getLocation())) {
+                                if (this.checkRegion(block.getLocation())) {
                                     continue;
                                 }
 
-                                if (!hoeItem.getBreakables().isEmpty() && !hoeItem.getBreakables().contains(XMaterial.matchXMaterial(block.getType()))) {
-                                    displayWarning = true;
-                                    continue;
+                                if (this.pluginConfig.hoeMode == HoeMode.WHITELIST) {
+                                    if (!hoeItem.getBreakables().isEmpty() && !hoeItem.getBreakables().contains(XMaterial.matchXMaterial(block.getType()))) {
+                                        displayWarning = true;
+                                        continue;
+                                    }
+                                } else {
+                                    if (!hoeItem.getBreakables().isEmpty() && hoeItem.getBreakables().contains(XMaterial.matchXMaterial(block.getType()))) {
+                                        displayWarning = true;
+                                        continue;
+                                    }
                                 }
 
                                 block.breakNaturally();

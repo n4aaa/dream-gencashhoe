@@ -76,7 +76,7 @@ public class HoeCreatorBlocksMenu implements BukkitMenuPaginatedPlayerSetup {
 
         bukkitMenuPaginated.getStorageItemSlots().removeIf(slot -> this.pluginConfig.iconBreakablesMenuIgnoreSlots.contains(slot));
 
-        this.genCashHoeService.getMaterialsPresenter().stream().filter(materialPresenter -> !hoeItem.getBreakables().contains(XMaterial.matchXMaterial(materialPresenter.getType()))).forEach(materialPresenter -> {
+        this.genCashHoeService.getMaterialPresenters().stream().filter(materialPresenter -> !hoeItem.getBreakables().contains(XMaterial.matchXMaterial(materialPresenter.getType()))).forEach(materialPresenter -> {
             bukkitMenuPaginated.addStorageItem(materialPresenter.clone(), e -> {
                 if (e.getWhoClicked() instanceof Player) {
                     Player player = (Player) e.getWhoClicked();

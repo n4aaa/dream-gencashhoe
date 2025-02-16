@@ -28,6 +28,10 @@ public class MessageConfig extends OkaeriConfig {
     public BukkitNotice enchantAdd = BukkitNotice.chat("&7Enchant został &adodany&7!");
     @CustomKey("cant-destroy")
     public BukkitNotice cantDestory = BukkitNotice.chat("&cNie możesz niszczyć tego motyką!");
+    @CustomKey("hoe-list")
+    public BukkitNotice hoeList = BukkitNotice.chat("&6&lLista motyk&8:");
+    @CustomKey("hoe-list-element")
+    public BukkitNotice hoeListElement = BukkitNotice.chat("&8- &f{name} &8: &e{size}");
 
     @CustomKey(value="hoe-do-not-exist")
     public BukkitNotice hoeDoNotExits = BukkitNotice.chat("&cPodana motyka nie istnieje!");
